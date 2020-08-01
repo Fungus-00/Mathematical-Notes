@@ -27,15 +27,15 @@
 \begin{defi}\label{longitudinal composition}
 	For functors $F,G,H:\mathcal{C}\to\mathcal{D}$, natural transformations $\theta:F\to G$ and $\psi:G\to H$, the element of {\rm longitudinal composition} of the natural transformations is defined as $(\psi\odot\theta)_X=\psi_X\circ\theta_X$. In commutative diagrams forms,
 	\[\begin{tikzcd}
-		& \arrow[d,Rightarrow,"\theta"]& \\
-		\mathcal{C} \arrow[rr, "F", bend left=75] \arrow[rr, "H"', bend right=75] \arrow[rr, "G" description]
-		& \textcolor{white}{s} \arrow[d,Rightarrow,"\psi"]
-		& \mathcal{D}\\ & \quad &
-	\end{tikzcd}\quad\text{means}\quad\begin{tikzcd}
-		\mathcal{C}
-		\arrow[bend left=50, rr, "F", ""' name=F]
-		\arrow[bend right=50, rr, "H"', "" name=H] & & 
-		\arrow[Rightarrow, from=F, to=H, "\psi\odot\theta"] \mathcal{D}.
+			& \arrow[d,Rightarrow,"\theta"]& \\
+			\mathcal{C} \arrow[rr, "F", bend left=75] \arrow[rr, "H"', bend right=75] \arrow[rr, "G" description] &
+			\textcolor{white}{s} \arrow[d,Rightarrow,"\psi"] &
+			\mathcal{D}\\ & \quad &
+		\end{tikzcd}\quad\text{means}\quad\begin{tikzcd}
+			\mathcal{C}
+			\arrow[bend left=50, rr, "F", ""' name=F]
+			\arrow[bend right=50, rr, "H"', "" name=H] & & 
+			\arrow[Rightarrow, from=F, to=H, "\psi\odot\theta"] \mathcal{D}.
 	\end{tikzcd}\]
 	Actually, we need to prove that the definition is well-defined, i.e., to verify that $(\psi\odot\theta)_X\in\mathrm{Hom}_\mathcal{D}(F(X),H(X))$ for all $X\in\mathrm{Ob}(\mathcal{C})$, it's easy to do so.
 \end{defi}
