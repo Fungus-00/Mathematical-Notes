@@ -1,13 +1,21 @@
+%Please compile this tex in "pdfLaTeX", and check the package before you compile it!
+%It's too hard to draw the commutative diagrams QAQ
+
 \documentclass{article}
-\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry}
-	\geometry{a4paper,left=1.5cm,right=1.5cm,top=0.5cm,bottom=1.5cm}
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref}
+	\geometry{a4paper,left=1.5cm,right=1.5cm,top=1.0cm,bottom=1.5cm}
 	\title{A Brief Introduction of Natural Transformation}
 	\author{Fungus}
-%It's too hard to draw the commutative diagrams!! QAQ
+	\hypersetup{colorlinks=true, linkcolor=blue}
 
 \begin{document}
 \maketitle
-\newtheorem{defi}{Definition}	\newtheorem{thm}{Theorem}
+\newtheorem{defi}{Definition}	\newtheorem{thm}{Theorem}	\newtheorem{ano}{Annotation}
+
+\begin{ano}
+In order to avoid confusion, for functors $F,G$, the sign $FG$ means the composition of $F$ and $G$, and ``$\ \circ$'' means the composition of morphism.
+\end{ano}
+
 
 \begin{defi}\label{natural transformation}
 	The {\rm natural transformation} $\theta$ between functors $F,G:\mathcal{C}\to\mathcal{D}$ is a collection of morphisms such that
@@ -17,15 +25,15 @@
 		F(X) \arrow[r,"\theta_X"] \arrow[d,"F(f)"'] & G(X) \arrow[d,"G(f)"] \\
 		F(Y) \arrow[r,"\theta_Y"'] & G(Y),
 	\end{tikzcd}\end{equation}
-	where $X,Y\in\mathcal{C}$ and $f\in\mathrm{Hom}_\mathcal{C}(X,Y)$. In other words, we can record the above natural transformation as $\theta:F\to G$, or in such a commutative diagram:
+	where $X,Y\in\mathcal{C}$ and $f\in\mathrm{Hom}_\mathcal{C}(X,Y)$. In other words, we can record the above natural transformation as $\theta:F\Rightarrow G$, or in such a commutative diagram:
 	\[\begin{tikzcd}
-		\mathcal{C} \arrow[r, "F", bend left=50, ""' name=F] \arrow[r, "G"', bend right=50, "" name=G] & \arrow[Rightarrow, to path=(F)--(G)\tikztonodes, "\theta"] \mathcal{D}.
+		\mathcal{C} \arrow[r, "F", bend left=50, ""' name=F] \arrow[r, "G"', bend right=50, "" name=G] & \arrow[Rightarrow, from=F, to=G, "\theta"] \mathcal{D}.
 	\end{tikzcd}\]
 \end{defi}
 
 
 \begin{defi}\label{longitudinal composition}
-	For functors $F,G,H:\mathcal{C}\to\mathcal{D}$, natural transformations $\theta:F\to G$ and $\psi:G\to H$, the element of {\rm longitudinal composition} of the natural transformations is defined as $(\psi\odot\theta)_X=\psi_X\circ\theta_X$. In commutative diagrams forms,
+	For functors $F,G,H:\mathcal{C}\to\mathcal{D}$, natural transformations $\theta:F\Rightarrow G$ and $\psi:G\Rightarrow H$, the element of {\rm longitudinal composition} of the natural transformations is defined as $(\psi\odot\theta)_X=\psi_X\circ\theta_X$. In commutative diagrams forms,
 	\[\begin{tikzcd}
 			& \arrow[d,Rightarrow,"\theta"]& \\
 			\mathcal{C} \arrow[rr, "F", bend left=75] \arrow[rr, "H"', bend right=75] \arrow[rr, "G" description] &
@@ -42,23 +50,23 @@
 
 
 \begin{defi}\label{horizontal composition}
-	For funtors $F,F':\mathcal{C}_1\to\mathcal{C}_2$ and $G,G':\mathcal{C}_2\to\mathcal{C}_3$, natural transformations $\theta:F\to F'$ and $\psi:G\to G'$, the element of {\rm horizontal composition} of natural transformations $(\psi\ominus\theta)_X$ is defined as $G'(\theta_X)\circ\psi_{F(X)}=\psi_{F'(X)}\circ G(\theta_X)$. In commutative diagrams forms,
+	For funtors $F,F':\mathcal{C}_1\to\mathcal{C}_2$ and $G,G':\mathcal{C}_2\to\mathcal{C}_3$, natural transformations $\theta:F\Rightarrow F'$ and $\psi:G\Rightarrow G'$, the element of {\rm horizontal composition} of natural transformations $(\psi\ominus\theta)_X$ is defined as $G'(\theta_X)\circ\psi_{F(X)}=\psi_{F'(X)}\circ G(\theta_X)$. In commutative diagrams forms,
 	\[\begin{tikzcd}
 			\mathcal{C}_1 \arrow[bend left=50, r, "F", ""' name=F] \arrow[bend right=50, r, "F'"', "" name=F'] &
 			\mathcal{C}_2 \arrow[bend left=50, r, "G", ""' name=G] \arrow[bend right=50, r, "G'"', "" name=G'] &
 			\arrow[Rightarrow, from=F, to=F', "\theta"] \arrow[Rightarrow, from=G, to=G', "\psi"]\mathcal{C}_3
 		\end{tikzcd}\quad{means}\quad\begin{tikzcd}
 			\mathcal{C}_1
-			\arrow[bend left=50, rr, "G\circ F", ""' name=A]
-			\arrow[bend right=50, rr, "G'\circ F'"', "" name=B] & & 
+			\arrow[bend left=50, rr, "GF", ""' name=A]
+			\arrow[bend right=50, rr, "G'F'"', "" name=B] & & 
 			\arrow[Rightarrow, from=A, to=B, "\psi\ominus\theta"]\mathcal{C}_3,
 	\end{tikzcd}\]
 	which satisfy
-	\begin{equation}\begin{tikzcd}
-		G(F(X)) \arrow[r,"G(\theta_X)"] \arrow[d,"\psi_{F(X)}"'] & G(F'(X)) \arrow[d,"\psi_{F'(X)}"] \\
-		G'(F(Y)) \arrow[r,"G'(\theta_X)"'] & G'(F'(Y)).
+	\begin{equation}\begin{tikzcd}\label{hor}
+		GF(X) \arrow[r,"G(\theta_X)"] \arrow[d,"\psi_{F(X)}"'] & GF'(X) \arrow[d,"\psi_{F'(X)}"] \\
+		G'F(Y) \arrow[r,"G'(\theta_X)"'] & G'F'(Y).
 	\end{tikzcd}\end{equation}
-	Actually, we need to prove that the definition is well-defined, i.e., to verify the commutative diagram and that $(\psi\ominus\theta)_X\in\mathrm{Hom}_{\mathcal{C}_3}(G(F(X)),G'(F'(X)))$ for all $X\in\mathrm{Ob}(\mathcal{C}_1)$, it's easy to do so.
+	Actually, we need to prove that the definition is well-defined, i.e., to verify the commutative diagram and that $(\psi\ominus\theta)_X\in\mathrm{Hom}_{\mathcal{C}_3}(GF(X),G'F'(X))$ for all $X\in\mathrm{Ob}(\mathcal{C}_1)$, it's easy to do so.
 \end{defi}
 
 
@@ -80,42 +88,83 @@
 			F(X) \arrow[dd,"F(f)"'] \arrow[rr,"(\psi\odot\theta)_X"] && H(X) \arrow[dd,"H(f)"] \\ && \\
 			F(y) \arrow[rr,"(\psi\odot\theta)_X"'] && H(y)
 		\end{tikzcd}\quad\text{and (b)}\quad\begin{tikzcd}
-			G(F(X)) \arrow[dd,"G(F(f))"] \arrow[rr,"(\theta'\ominus\theta)_X"] && G'(F'(X)) \arrow[dd,"G'(F'(f))"] \\ && \\
-			G(F(Y)) \arrow[rr,"(\theta'\ominus\theta)_Y"'] && G'(F'(Y))
+			GF(X) \arrow[dd,"GF(f)"] \arrow[rr,"(\theta'\ominus\theta)_X"] && G'F'(X) \arrow[dd,"G'F'(f)"] \\ && \\
+			GF(Y) \arrow[rr,"(\theta'\ominus\theta)_Y"'] && G'F'(Y)
 		\end{tikzcd}.\]
 		
 		From (a), we have
-		\begin{align}\label{(a)}
+		\begin{align}
 			 & H(f)\circ(\psi\odot\theta)_X\tag{Assumption}\\
-			=& H(f)\circ\psi_X\circ\theta_X\tag{Definition of longitudinal composition}\\
+			=& H(f)\circ\psi_X\circ\theta_X\tag{Def: longitudinal composition}\\
 			=& (\psi_Y\circ G(f))\circ\theta_X\tag{Property of natural transformation $\psi$}\\
 			=& \psi_Y\circ\theta_Y\circ F(f)\tag{Property of natural transformation $\theta$}\\
-			=& (\psi\odot\theta)_X\circ F(f),\tag{Definition of longitudinal composition}
+			=& (\psi\odot\theta)_X\circ F(f),\tag{Def: longitudinal composition}
 		\end{align}
 		thus $(\psi\odot\theta)$ is natural transformation.\\
 		
 		From (b), we have
-		\begin{align}\label{(b)}
-			 & G'(F'(f))\circ(\theta'\ominus\theta)_X\tag{Assumption}\\
-			=& G'(F'(f))\circ\theta'_{F'(X)}\circ G(\theta_X)\tag{Definition of horizontal composition}\\
-			=& \theta'_{F'(Y)}\circ G(F'(f))\circ G(\theta_X)\tag{Property of natural transformation $\theta'$}\\
+		\begin{align}
+			 & G'F'(f)\circ(\theta'\ominus\theta)_X\tag{Assumption}\\
+			=& G'F'(f)\circ\theta'_{F'(X)}\circ G(\theta_X)\tag{Def: horizontal composition}\\
+			=& \theta'_{F'(Y)}\circ GF'(f)\circ G(\theta_X)\tag{Property of natural transformation $\theta'$}\\
 			=& \theta'_{F'(Y)}\circ G(F'(f)\circ G(\theta_X))\tag{Property of functor $G$}\\
 			=& \theta'_{F'(Y)}\circ G(\theta_Y\circ F(f))\tag{Property of natural transformation $\theta$}\\
-			=& \theta'_{F'(Y)}\circ G(\theta_Y)\circ G(F(f))\tag{Property of functor $G$}\\
-			=& (\theta'\ominus\theta)_Y\circ G(F(f))\tag{Definition of horizontal composition},
+			=& \theta'_{F'(Y)}\circ G(\theta_Y)\circ GF(f)\tag{Property of functor $G$}\\
+			=& (\theta'\ominus\theta)_Y\circ GF(f)\tag{Def: horizontal composition},
 		\end{align}
 		thus $(\psi\ominus\theta)$ is natural transformation.\\
 		
 		{\bf What's more}, we can prove that $(\psi\odot\theta)\ominus(\psi'\odot\theta')=(\psi'\ominus\psi)\odot(\theta'\ominus\theta)$:
 		\begin{align}
 			 & ((\psi'\odot\theta')\ominus(\psi\odot\theta))_X\tag{Assumption}\\
-			=& (\psi'\odot\theta')_{H(X)}\circ F'(\psi\odot\theta)_X\tag{Definition of horizontal composition}\\
-			=& \psi'_{H(X)}\circ\theta_{H(X)}\circ F'(\theta_X)\circ F'(\theta_X)\tag{Definition of longitudinal composition, Property of functor $F'$}\\
-			=& \psi'_{H(X)}\circ(G'(\psi_X)\circ \theta'_{G(X)})\circ F'(\theta_X)\tag{b}\\
-			=& (\psi'\ominus\psi)_X\circ(\theta'\ominus\theta)_X\tag{Definition of horizontal composition}\\
-			=& ((\psi'\ominus\psi)\odot(\theta'\ominus\theta))_X,\tag{Definition of longitudinal composition}
+			=& (\psi'\odot\theta')_{H(X)}\circ F'(\psi\odot\theta)_X\tag{Def: horizontal composition}\\
+			=& \psi'_{H(X)}\circ\theta_{H(X)}\circ F'(\theta_X)\circ F'(\theta_X)\tag{Def: longitudinal composition, Property of functor $F'$}\\
+			=& \psi'_{H(X)}\circ(G'(\psi_X)\circ \theta'_{G(X)})\circ F'(\theta_X)\tag{\hyperref[hor]{Commutative diagram (2)}}\\
+			=& (\psi'\ominus\psi)_X\circ(\theta'\ominus\theta)_X\tag{Def: horizontal composition}\\
+			=& ((\psi'\ominus\psi)\odot(\theta'\ominus\theta))_X,\tag{Def: longitudinal composition}
 		\end{align}
 		where $X\in\mathrm{Ob}(\mathcal{C})$.
+\end{proof}
+
+\begin{thm}
+	Both longitudinal and horizonal compositions of natural transformations satisfy associative law.
+\end{thm}
+\begin{proof}
+	For longitudinal composition, observe the following commutative diagram and natural transformations:
+	\[\text{For}\quad\begin{tikzcd}
+		\mathcal{C}
+			\arrow[r, bend left =90, "F"]
+			\arrow[r, bend left =35, "G" description] 
+			\arrow[r, bend right=35, "H" description]
+			\arrow[r, bend right=90, "K"'] &
+		\mathcal{D}
+	\end{tikzcd}\quad\text{as well as}\quad
+	\left\{\begin{aligned}
+		& \theta:F\Rightarrow G,\\
+		& \psi:G\Rightarrow H,\\
+		& \phi:H\Rightarrow K,
+	\end{aligned}\right.\]
+	It's trivial to prove that $((\phi\odot\psi)\odot\theta)_X=(\phi\odot(\psi\odot\theta))_X$ for all $X\in \mathrm{Ob}(\mathcal{C})$, thus the longitudinal composition satisfies associative law.
+
+	\[\text{For}\quad\begin{tikzcd}
+		\mathcal{C}_1 \arrow[bend left=50, r, "F", ""' name=F] \arrow[bend right=50, r, "F'"', "" name=F'] &
+		\mathcal{C}_2 \arrow[bend left=50, r, "G", ""' name=G] \arrow[bend right=50, r, "G'"', "" name=G'] &	
+		\mathcal{C}_3 \arrow[bend left=50, r, "H", ""' name=H] \arrow[bend right=50, r, "H'"', "" name=H'] &
+		\arrow[Rightarrow, from=F, to=F', "\theta"]
+		\arrow[Rightarrow, from=G, to=G', "\psi"]
+		\arrow[Rightarrow, from=H, to=H', "\phi"]
+		\mathcal{C}_4,
+	\end{tikzcd}\]
+	we have
+	\begin{align}
+		 & (\phi\ominus(\psi\ominus\theta))_X\tag{Assumption}\\
+		=& \phi_{G'F'(X)}\circ H(\psi\ominus\theta)_X\tag{Def: horizontal composition}\\
+		=& \phi_{G'F'(X)}\circ H(\psi_{F'(X)}\circ G(\theta_X))\tag{Ditto}\\
+		=& \phi_{G'F'(X)}\circ H(\psi_{F'(X)})\circ HG(\theta_X)\tag{Property of functor $H$}\\
+		=& (\phi\ominus\psi)_{F'(X)}\circ HG(\theta_X)\tag{Def: horizontal composition}\\
+		=& ((\phi\ominus\psi)\ominus\theta)_X\tag{Ditto},
+	\end{align}
+	thus the horizonal composition satisfies associative law.
 \end{proof}
 
 \end{document}
