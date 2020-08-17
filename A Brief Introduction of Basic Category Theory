@@ -1,0 +1,712 @@
+%Please compile this tex in "pdfLaTeX", and check the package before you compile it!
+%This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib" is in there, and please read the file "README.md" in that website before you complie this tex with reference.
+%It's too hard to draw the commutative diagrams QAQ
+
+\documentclass{article}
+\usepackage[scheme=plain]{ctex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools}
+	\geometry{a4paper,left=1.25cm,right=1.25cm,top=1.0cm,bottom=1.4cm}
+	\title{A Brief Introduction of Basic Category Theory}
+	\author{Fungus}
+	\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=SkyBlue,citecolor=red}
+\bibliographystyle{plain}
+
+\begin{document}
+\maketitle
+\renewcommand{\thefootnote}{\color{red}{*}}
+\theoremstyle{definition}
+\newtheorem{defi}{Definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{lmm}{Lemma}
+\newtheorem{exm}{Example}
+\newtheorem{cor}{Corollary}
+\newcommand\Ob{\mathrm{Ob}}
+\newcommand\Mor{\mathrm{Mor}}
+\newcommand\Hom{\mathrm{Hom}}
+\newcommand\dom{\mathrm{dom}}
+\newcommand\cod{\mathrm{cod}}
+\newcommand\id{\mathrm{id}}
+\newcommand\op{^\mathrm{op}}
+\newcommand\zfc{\mathsf{ZFC}}
+\newcommand\con{\mathrm{Con}}
+\newcommand\tid{\mathbf{id}}
+\newcommand\ca{\mathcal{C}}
+\newcommand\D{\mathcal{D}}
+\newcommand\1{\mathit{1}}
+\newcommand\iv{^{-1}}
+\newcommand\equ{\mathop{\Rightarrow}\limits^{\sim}}
+\nocite{alg-2}\nocite{cat-3}\nocite{cat-4}\nocite{cat-5}\nocite{cat-6-1}\nocite{cat-7}\nocite{cat-8}
+
+These are my notes of basic category theory. The category theory which talk about in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice}), as for \emph{metacategory}, please see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Definition:Metacategory - ProofWiki}. The main sources of this text come from \cite[第二章]{alg-1}.
+
+
+\begin{defi}\label{category}
+	A \emph{category} $\ca$ consists of:
+	\begin{itemize}
+		\item A collection $\Ob(\ca)$ of \emph{objects} $X,Y,Z\cdots$
+		\item A collection 
+			$$\Mor(\ca)=\bigsqcup_{X\in\Ob(\ca)}{\mathrm{sou}_\ca(X)}=\bigsqcup_{Y\in\Ob(\ca)}{\mathrm{tar}_\ca(Y)}=\bigsqcup_{X,Y\in\Ob(\ca)}{\Hom_\ca(X,Y)}$$
+			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{sou}_\ca(X)$ is the \emph{domain} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain} of its elements, and \emph{homology class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
+				\footnote{Strictly speaking, the morphism is composed by a 3-tuple $\left<X,f,Y\right>$, otherwise, it will cause confusion. For instance, in set category $\mathsf{Set}$ (see \hyperref[exm3]{Example 3.1}), if we don't discriminate the same mapping in different homology class, i.e., which have different codomains (such as $f:\{0\}\to\{0\}$ and $g:\{0\}\to\{0,1\}$ which satisfy $f(0)=g(0)=0$), then they are the same morphism, it will contradict the disjoint of homology class. Of course, for convenience, we will omit the 3-tuples when describing morphisms.}
+			For $W,X,Y,Z\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)\wedge g\in\Hom_\ca(Y,Z)$, the binary operation that defines \emph{composite morphism} $g\circ^\ca f$ (which is abbreviated as $g\circ f$) satisfies:
+			\begin{enumerate}
+				\item $g\circ f\in\Hom_\ca(X,Z)$;
+				\item $\forall h\in\Hom_\ca(Z,W)[h\circ(g\circ f)=(h\circ g)\circ f]$;
+				\item $\forall h\in\Hom_\ca(Y,X)\exists \1^\ca_X\in\Hom_\ca(X,X)[f\circ\1^\ca_X=f\wedge\1^\ca_X\circ h=h]$.
+			\end{enumerate}
+	\end{itemize}
+	
+	It's easy to verify that the \emph{identity morphism} $\1^\ca_X$ (which is abbreviated as $\1_X$) is unique for all $X\in\Ob(\ca)$.\\
+	In addition, we abbreviate $\Hom_\ca(X,X)$ as $\mathrm{End}_\ca(X)$, it's easy to see that $\left<\mathrm{End}_\ca(X),\circ,\1_X\right>$ is a monoid group.
+	
+	In commutative diagram,
+	\[\begin{tikzcd}
+			X\arrow[->,>=stealth,r,"f"] & Y
+		\end{tikzcd}\quad\text{means}\quad f\in\Hom_\ca(X,Y),\quad
+		\begin{tikzcd}
+			X\arrow[->,>=stealth,dd,"f"]\arrow[->,>=stealth,rrdd,"h"] & & \\ & & \\
+			Y\arrow[->,>=stealth,rr,"g"] & & Z
+	\end{tikzcd}\quad\text{means}\quad g\circ f=h.\]
+\end{defi}
+
+
+\begin{exm}
+	Here are some special examples.
+	\begin{enumerate}
+		\item Consider a category $\mathsf{Rel}$ in $\mathsf{ZF}$:
+		\begin{itemize}
+			\item Objects are all sets.
+			\item Homomorphism between any sets $X,Y$ is the power set of binary relations $\mathscr{P}(X\times Y)$.
+			\item The composition of morphisms is the composition of binary relations.
+			\item Identity morphism $\1_X$ is the identity mapping $\id_X=\{\left<x,x\right>|\,x\in X\}$.
+		\end{itemize}
+		Obviously, it's indeed a category. This example shows that the morphisms are not only mappings, they may have looser structures. Compared to this, morphisms are more like binary relations.
+	
+		\item Consider a set $S$, we can use it to construct a \emph{discrete category} $\mathsf{Disc}(S)$, which $\Ob(\mathsf{Disc}(S))=S$ and $\Mor(\mathsf{Disc}(S))=\{\1_x|\,x\in S\}$. A category without any objects and morphisms is called \emph{zero} category $\mathbf{0}$. A discrete category which has exactly one object is written as $\mathbf{1}$.
+	
+		\item Consider a category $\ca$ and its object $I$, the \emph{slice} category $\ca/I$ satisfies:
+		\begin{itemize}
+			\item Objects are all the morphisms $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(X,I)$;
+			\item $\Hom_{\ca/I}(f,g)=\{j\in\Hom_\ca(\dom_\ca(f),\dom_\ca(g))|\,g\circ^\ca j=f\}$;
+			\item $\1^{\ca/I}_f=\1^\ca_{\dom_\ca(f)}$;
+			\item if $\cod_{\ca/I}(f)=\dom_{\ca/I}(g)$ then $k\circ^{\ca/I}j=k\circ^\ca j$.
+		\end{itemize}
+		It's easy to verify that $\ca/I$ is indeed a category.\\
+		Similarly, we can define \emph{coslice} category $I/\ca$, whose the objects are $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(I,X)$, and $\Hom_{I/\ca}(f,g)=\{j\in\Hom_\ca(\cod_\ca(f),\cod_\ca(g))|\,j\circ^\ca f=g\}$.
+	\end{enumerate}
+\end{exm}
+
+
+\begin{defi}\label{subcategory, opposite category, small category}
+	$\ca'$ is a \emph{subcategory} of category $\ca$ if:
+	\begin{itemize}
+		\item $\ca'$ is a category;
+		\item $\Ob(\ca')\subseteq\Ob(\ca)$;
+		\item $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)\subseteq\Hom_\ca(X,Y)]$;
+		\item $\forall f,g\in\Mor(\ca')[f\circ^{\ca'}g=f\circ^{\ca}g]$ (if $f\circ^{\ca}g$ is defined);
+		\item for all $X\in\Ob(\ca')$, the identity morphism $\1_X$ in $\ca'$ is also that in $\ca$.
+	\end{itemize}
+	In particular, if $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)=\Hom_\ca(X,Y)]$, then we say 	$\ca'$ is the \emph{full subcategory} of $\ca$.
+	
+	A \emph{opposite} category $\ca\op$ of category $\ca$ satisfies:
+	\begin{itemize}
+		\item $\Ob(\ca\op)=\Ob(\ca)$;
+		\item $\forall X,Y\in\Ob(\ca\op)[\Hom_{\ca\op}(X,Y)=\Hom_{\ca}(Y,X)]$, i.e., $[f\in\Hom_\ca(X,Y)\iff f\op\in\Hom_{\ca\op}(X,Y)]$;
+		\item $\forall f,g\in\Mor(\ca)[g\op\circ\op f\op=(f\circ^\ca g)\op]$;
+		\item for all $X\in\Ob(\ca\op)$, the identity morphism $\1_X$ in $\ca\op$ is also that in $\ca$.
+	\end{itemize}
+	It's easy to verify that $\ca$ is also a category, and we have $(\ca\op)\op=\ca$. $\ca\op$ has the symmetric algebraic properties as $\ca$.
+	
+	A category $\ca$ is called \emph{small} if both $\Ob(\ca)$ and $\Mor(\ca)$ are sets in $\zfc$ but not proper class,
+	 \footnote{``$X$ is a set in $\zfc$'' has two meanings: we can prove $X$ exists in $\zfc$, i.e., $\zfc\vdash_\mathbf{H}\exists X$; or the existence of $X$ in $\zfc$ is consistent with $\zfc$, i.e., $\vdash_\mathbf{H}\mathrm\con(\zfc)\to\con(\zfc+\exists X)$, where $\mathbf{H}$ means the Frege-Hilbert first-order logic axiomatic system. The meaning in the text is the former. Of course, to prove the consistency, we often need to add extra axioms. The provability of $\zfc$ is limited, so we can only define the set in the model $(V_\kappa,\in)$, where $\kappa$ is the least strongly inaccessible cardinal, but that's enough. See \cite{set-1} for more details.}
+	and \emph{large} otherwise. A \emph{locally small} category is a category such that for all objects $X$ and $Y$, $\Hom(X,Y)$ is a set in $\zfc$, called a \emph{homset}.
+\end{defi}
+
+
+\begin{defi}\label{functor}
+	A \emph{functor} $F:\ca\to\D$, between category $\ca$ and $\D$, consists the following data:
+	\begin{itemize}
+		\item Mapping $F:\Ob(\ca)\to\Ob(\D)$.
+		\item Mapping $F:\Mor(\ca)\to\Mor(\D)$, which satisfies:
+		\begin{enumerate}
+			\item $F[\Hom_\ca(X,Y)]\subseteq\Hom_\D(F(X),G(Y))$ for all $X,Y\in\Ob(\ca)$;
+			\item For all $f,g\in\Mor(\ca)$, if $\cod_\ca(f)=\dom_\ca(g)$, then $F(g\circ^\ca f)=F(g)\circ^\D F(f)$;
+			\item $F(\1^\ca_X)=\1^\D_{F(X)}$ for all $X\in\Ob(\ca)$.
+		\end{enumerate}
+	\end{itemize}
+	
+	In commutative diagram,
+	\[\begin{tikzcd}
+			\ca\arrow[r,"F"] & \D
+	\end{tikzcd}\]
+	means that $F$ is the functor between $\ca$ and $\D$.
+	
+	For functors $F:\ca_1\to\ca_2,G:\ca_2\to\ca_3$, the composition $GF:\ca_1\to\ca_3$ between both satisfies:
+		\[GF(X)=G(F(X))\ \text{and}\ GF(f)=G(F(f))\ \text{for all}\ X\in\Ob(\ca_1),f\in\Mor(\ca_1).\]
+	It's trivial to verify that the composition is also a functor and it satisfy associative law.
+	
+	For any category $\ca$, there exists a \emph{identity functor} $\id_\ca:\ca\to\ca$ that satisfies
+		\[\id_\ca(X)=X\ \text{and}\ \id_\ca(f)=f\ \text{for all}\ X\in\Ob(\ca_1),f\in\Mor(\ca_1).\]
+	It's easy to verify that for all functors $F:\ca\to\D$, $G:\D\to\ca$ and $C:\ca\to\ca$, $FC=F\wedge CG=G$ if and only if $C=\id_\ca$.
+\end{defi}
+
+
+\begin{defi}\label{natural transformation}
+	The \emph{natural transformation} $\theta$ between functors $F,G:\ca\to\D$ is a mapping from $\Ob(\ca)$ to $\Mor(\D)$ whose each value satisfies $\theta_X:=\theta(X)\in\Hom_\D(F(X),G(X))$ and the commutative diagram below:
+	\begin{equation}\begin{tikzcd}\label{ntr}
+		F(X) \arrow[->,>=stealth,r,"\theta_X"] \arrow[->,>=stealth,d,"F(f)"'] & G(X) \arrow[->,>=stealth,d,"G(f)"]\\
+		F(Y) \arrow[->,>=stealth,r,"\theta_Y"'] & G(Y),
+	\end{tikzcd}\end{equation}
+	where $X,Y\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)$. In other words, we can record the above natural transformation as $\theta:F\Rightarrow G$,
+		\footnote{Like morphism, strictly speaking, functor $F:\ca\to\D$ and natural transformation $\theta:F\to G$ are also composed by 3-tuples $\left<\ca,F,\D\right>$ and $\left<F,\theta,G\right>$, rather than simple ``mappings''. For instance, consider a category $\ca$ and its subcategory $\ca'$, category $\D$, functor $F:\D\to\ca'$, inclusion functor (see \hyperref[func]{Example 4.1}) $\iota:\ca'\to\ca$. Then the composition $\iota F:\D\to\ca$ is different from single functor $F:\D\to\ca'$, although they are the same if you regard them as mappings.}
+	or in such a commutative diagram:
+	\[\begin{tikzcd}
+			\ca \arrow[r, "F", bend left=50, ""' name=F] \arrow[r, "G"', bend right=50, "" name=G] & \arrow[Rightarrow, from=F, to=G, "\theta"] \D.
+	\end{tikzcd}\]
+	
+	We may use symbol ``$F(\theta)_X$'' instead of ``$F((\theta)_X)$'' in some particular case (such as there are more than one symbols of natural transformations in the brackets).
+	
+	For functor $F:\ca\to\D$, there exists a \emph{identity transformation} $\tid^F:F\to F$ that satisfies $\forall X\in\Ob(\ca)[\tid^F_X=\1_{F(X)}]$.
+\end{defi}
+
+
+\begin{exm}
+	Consider two \emph{finite} categories $\ca,\D$ where $\Ob(\ca)=\{X,Y\}$ and $\Ob(\D)=\{\{a,b\},\{1,2\},\{3,4\},\{c,d\}\}$. There are three morphisms in $\ca$: $\1_X$, $\1_Y$ and $f\in\Hom_\ca(X,Y)$. Consider four functors $F,F',G,G':\ca\to\D$ such that
+	\[F(X)=\{a,b\}=F'(X),G(Y)=\{c,d\}=G'(Y).\]
+	And consider two natural transformations $\theta,\psi:F\Rightarrow G$, and all the morphisms (mappings) in $\D$ except identity morphisms are shown below:
+	\[\begin{tikzcd}
+	& a \arrow[r,no head,dashed,"F(X)"] \arrow[->,>=stealth,ldd,color=red] \arrow[->,>=stealth,rrdd,color=green] \arrow[->,>=stealth,rrd,color=cyan] \arrow[->,>=stealth,ddd]
+	& b \arrow[->,>=stealth,lldd,color=red] \arrow[->,>=stealth,rd,color=cyan] \arrow[->,>=stealth,rdd,color=green] \arrow[->,>=stealth,lddd] & \\
+	  1 \arrow[->,>=stealth,rdd,color=yellow] \arrow[->,>=stealth,rrdd,color=blue] && 
+	& 3 \arrow[d,no head,dashed] \arrow[->,>=stealth,lldd,color=brown]\\
+	  2 \arrow[u,no head,dashed] \arrow[->,>=stealth,rd,color=yellow] \arrow[->,>=stealth,rd,color=blue,bend right] &&
+	& 4 \arrow[->,>=stealth,lld,color=brown]\\
+	& c 
+	& d \arrow[l,no head,dashed,"G(Y)"] &         
+	\end{tikzcd}\]
+	Where the arrows with different colors mean the different mappings, balck arrows mean the morphism $k$, and the elements connected by one dashed line belong to the same set. There are 7 isomorphisms (except identity morphisms) in $\D$ in total, it's easy to see that $\D$ is indeed a category (we just need to verify that the compositions of any morphisms in $\D$ are also morphisms in it).
+	
+	\begin{itemize}
+		\item Consider the following combination of objects and morphisms:
+			\[G(X)=\{1,2\}=G'(X),F(Y)=\{3,4\}=F'(Y);\]
+			\centerline{\textcolor{red}{red:}$\theta_X$, \textcolor{yellow}{yellow}:$G(f)$, \textcolor{blue}{blue:}$G'(f)$, \textcolor{cyan}{cyan:}$F(f)$, \textcolor{green}{grenn:}$F'(f)$, \textcolor{brown}{brown:}$\theta_Y$.}\\
+		The four functors are indeed functors. What's more, it's trivial to verify that
+		\[\theta_Y\circ F'(f)=\theta_Y\circ F(f)=k=G(f)\circ\theta_X=G'(f)\circ\theta_X,\]
+		thus we know $\theta$ is indeed a natural transformation, and obviously $\theta$ have more than one ``sources'' and ``targets''.
+		
+		\item Consider the following combination of objects and morphisms:
+			\[G(X)=\{3,4\},F(Y)=\{1,2\};\]
+			\centerline{\textcolor{red}{red:}$F(f)$, \textcolor{yellow}{yellow}:$\theta_Y$, \textcolor{blue}{blue:}$\psi_Y$, \textcolor{cyan}{cyan:}$\theta_X$, \textcolor{green}{grenn:}$\psi_X$, \textcolor{brown}{brown:}$G(f)$.}\\
+		The two functors are indeed functors. What's more, it's trivial to verify that
+		\[\theta_Y\circ F(f)=\psi_Y\circ F(f)=k=G(f)\circ\theta_X=G(f)\circ\psi_X,\]
+		thus we know $\theta$ and $\psi$ are indeed natural transformations between $F$ and $G$.
+	\end{itemize}
+	These examples show us that one natural transformation can rely on different functors, and there may be different natural transformations ``between'' two functors. Hence it is necessary to label the natural transformations as 3-tuples.
+\end{exm}
+
+
+\begin{defi}\label{vertical composition}
+	For functors $F,G,H:\ca\to\D$, natural transformations $\theta:F\Rightarrow G$ and $\psi:G\Rightarrow H$, the element of \emph{vertical composition} of the natural transformations is defined as $(\psi\odot\theta)_X=\psi_X\circ\theta_X$. In commutative diagrams forms,
+	
+	\[\begin{tikzcd}
+			& \arrow[d,Rightarrow,"\theta"] & \\
+			\ca \arrow[rr, "F", bend left=75] \arrow[rr, "H"', bend right=75] \arrow[rr, "G" description] &
+			\textcolor{white}{s} \arrow[d,Rightarrow,"\psi"] &
+			\D\\ & \quad &
+		\end{tikzcd}\quad\text{means}\quad\begin{tikzcd}
+			\ca
+			\arrow[bend left=50, rr, "F", ""' name=F]
+			\arrow[bend right=50, rr, "H"', "" name=H] & & 
+			\arrow[Rightarrow, from=F, to=H, "\psi\odot\theta"] \D.
+	\end{tikzcd}\]
+	
+	Actually, we need to prove that the definition is well-defined, i.e., to verify that $(\psi\odot\theta)_X\in\Hom_\D(F(X),H(X))$ for all $X\in\Ob(\ca)$, it's easy to do so.
+\end{defi}
+
+
+\begin{defi}\label{horizontal composition}
+	For functors $F,F':\ca_1\to\ca_2$ and $G,G':\ca_2\to\ca_3$, natural transformations $\theta:F\Rightarrow F'$ and $\psi:G\Rightarrow G'$, the element of \emph{horizontal composition} of natural transformations $(\psi\ominus\theta)_X$ is defined as $G'(\theta_X)\circ\psi_{F(X)}=\psi_{F'(X)}\circ G(\theta_X)$. In commutative diagrams forms,
+	\[\begin{tikzcd}
+			\ca_1 \arrow[bend left=50, r, "F", ""' name=F] \arrow[bend right=50, r, "F'"', "" name=F'] &
+			\ca_2 \arrow[bend left=50, r, "G", ""' name=G] \arrow[bend right=50, r, "G'"', "" name=G'] &
+			\arrow[Rightarrow, from=F, to=F', "\theta"] \arrow[Rightarrow, from=G, to=G', "\psi"]\ca_3
+		\end{tikzcd}\quad{means}\quad\begin{tikzcd}
+			\ca_1
+			\arrow[bend left=50, rr, "GF", ""' name=A]
+			\arrow[bend right=50, rr, "G'F'"', "" name=B] & & 
+			\arrow[Rightarrow, from=A, to=B, "\psi\ominus\theta"]\ca_3,
+	\end{tikzcd}\]
+	which satisfy
+	\begin{equation}\begin{tikzcd}\label{hor}
+		GF(X) \arrow[->,>=stealth,r,"G(\theta_X)"] \arrow[->,>=stealth,d,"\psi_{F(X)}"'] & GF'(X) \arrow[->,>=stealth,d,"\psi_{F'(X)}"]\\
+		G'F(Y) \arrow[->,>=stealth,r,"G'(\theta_X)"'] & G'F'(Y).
+	\end{tikzcd}\end{equation}
+	
+	Actually, we need to prove that the definition is well-defined, i.e., to verify the commutative diagram and that $(\psi\ominus\theta)_X\in\Hom_{\ca_3}(GF(X),G'F'(X))$ for all $X\in\Ob(\ca_1)$, it's easy to do so observing \hyperref[ntr]{commutative diagram 1}.
+\end{defi}
+
+
+\begin{thm}
+	The vertical and horizontal compositions of natural transformations are natural transformations, and the natural transformations satisfy the \emph{interchange law} (\hyperref[per]{formula 3}).	
+\end{thm}
+
+\begin{proof}
+	For
+	\[\begin{tikzcd}
+		\ca_1
+		\arrow[bend left=75, rr, "F", ""' name=F] \arrow[rr, "G" description, "" name=G, ""' name=GG] \arrow[bend right=75, rr, "H"', "" name=H] & &
+		\arrow[Rightarrow, from=F, to=G, "\theta"] \arrow[Rightarrow, from=GG, to=H, "\psi"]
+		\ca_2 \arrow[bend left=75, rr, "F'", ""' name=F'] \arrow[rr, "G'" description, "" name=G', ""' name=GG'] \arrow[bend right=75, rr, "H'"', "" name=H'] & &
+		\arrow[Rightarrow, from=F', to=G', "\theta'"] \arrow[Rightarrow, from=GG', to=H', "\psi'"] \ca_3
+	\end{tikzcd},\]\\
+	we need to verify the following commutative diagrams:
+		\[\text{(a)}\quad\begin{tikzcd}
+				F(X) \arrow[->,>=stealth,dd,"F(f)"'] \arrow[->,>=stealth,rr,"(\psi\odot\theta)_X"] && H(X) \arrow[->,>=stealth,dd,"H(f)"]\\ && \\
+				F(y) \arrow[->,>=stealth,rr,"(\psi\odot\theta)_X"'] && H(y)
+			\end{tikzcd}\quad\text{and (b)}\quad\begin{tikzcd}
+				GF(X) \arrow[->,>=stealth,dd,"GF(f)"] \arrow[->,>=stealth,rr,"(\theta'\ominus\theta)_X"] && G'F'(X) \arrow[->,>=stealth,dd,"G'F'(f)"]\\ && \\
+				GF(Y) \arrow[->,>=stealth,rr,"(\theta'\ominus\theta)_Y"'] && G'F'(Y)
+		\end{tikzcd}.\]
+	
+	From (a), we have
+	\begin{align*}
+		& H(f)\circ(\psi\odot\theta)_X\\
+		=& H(f)\circ\psi_X\circ\theta_X\tag{Def: vertical composition}\\
+		=& (\psi_Y\circ G(f))\circ\theta_X\tag{Property of natural transformation $\psi$}\\
+		=& \psi_Y\circ\theta_Y\circ F(f)\tag{Property of natural transformation $\theta$}\\
+		=& (\psi\odot\theta)_X\circ F(f),\tag{Def: vertical composition}
+	\end{align*}
+	thus $(\psi\odot\theta)$ is natural transformation.\\
+		
+	From (b), we have
+	\begin{align*}
+		& G'F'(f)\circ(\theta'\ominus\theta)_X\\
+		=& G'F'(f)\circ\theta'_{F'(X)}\circ G(\theta_X)\tag{Def: horizontal composition}\\
+		=& \theta'_{F'(Y)}\circ GF'(f)\circ G(\theta_X)\tag{Property of natural transformation $\theta'$}\\
+		=& \theta'_{F'(Y)}\circ G(F'(f)\circ G(\theta_X))\tag{Property of functor $G$}\\
+		=& \theta'_{F'(Y)}\circ G(\theta_Y\circ F(f))\tag{Property of natural transformation $\theta$}\\
+		=& \theta'_{F'(Y)}\circ G(\theta_Y)\circ GF(f)\tag{Property of functor $G$}\\
+		=& (\theta'\ominus\theta)_Y\circ GF(f)\tag{Def: horizontal composition},
+	\end{align*}
+	thus $(\psi\ominus\theta)$ is natural transformation.\\
+		
+	For interchange law
+		\begin{equation}\label{per}
+			(\psi\odot\theta)\ominus(\psi'\odot\theta')=(\psi'\ominus\psi)\odot(\theta'\ominus\theta),
+		\end{equation}
+	we can prove it in the below step:
+	\begin{align*}
+		 & ((\psi'\odot\theta')\ominus(\psi\odot\theta))_X\\
+		=& (\psi'\odot\theta')_{H(X)}\circ F'(\psi\odot\theta)_X\tag{Def: horizontal composition}\\
+		=& \psi'_{H(X)}\circ\theta_{H(X)}\circ F'(\theta_X)\circ F'(\theta_X)\tag{Def: vertical composition, Property of functor $F'$}\\
+		=& \psi'_{H(X)}\circ(G'(\psi_X)\circ \theta'_{G(X)})\circ F'(\theta_X)\tag{\hyperref[hor]{Commutative diagram 2}}\\
+		=& (\psi'\ominus\psi)_X\circ(\theta'\ominus\theta)_X\tag{Def: horizontal composition}\\
+		=& ((\psi'\ominus\psi)\odot(\theta'\ominus\theta))_X,\tag{Def: vertical composition}
+	\end{align*}
+	where $X\in\Ob(\ca)$.
+\end{proof}
+
+\begin{thm}
+	Both vertical and horizontal compositions of natural transformations satisfy associative law.
+\end{thm}
+
+\begin{proof}
+	For vertical composition, observe the following commutative diagram and natural transformations:
+
+	For
+	\[\begin{tikzcd}
+		\ca
+		\arrow[rrr, bend left =80, "F", ""' name=F]
+		\arrow[rrr, bend left =20, "G" description, "" name=G, ""' name=GG] 
+		\arrow[rrr, bend right=20, "H" description, "" name=H, ""' name=HH]
+		\arrow[rrr, bend right=80, "K"', "" name=K] & & &
+		\D,
+		\arrow[Rightarrow, "\theta", from=F, to=G]
+		\arrow[Rightarrow, "\psi" , from=GG, to=H]
+		\arrow[Rightarrow, "\phi" , from=HH, to=K]
+	\end{tikzcd}\]
+	it's trivial to prove that $((\phi\odot\psi)\odot\theta)_X=(\phi\odot(\psi\odot\theta))_X$ for all $X\in \Ob(\ca)$, thus the vertical composition satisfies associative law.
+
+	For
+	\begin{equation}\begin{tikzcd}\label{ass}
+		\ca_1 \arrow[bend left=50, r, "F", ""' name=F] \arrow[bend right=50, r, "F'"', "" name=F'] &
+		\ca_2 \arrow[bend left=50, r, "G", ""' name=G] \arrow[bend right=50, r, "G'"', "" name=G'] &	
+		\ca_3 \arrow[bend left=50, r, "H", ""' name=H] \arrow[bend right=50, r, "H'"', "" name=H'] &
+		\arrow[Rightarrow, from=F, to=F', "\theta"]
+		\arrow[Rightarrow, from=G, to=G', "\psi"]
+		\arrow[Rightarrow, from=H, to=H', "\phi"]
+		\ca_4,
+	\end{tikzcd}\end{equation}
+	we have
+	\begin{align*}
+		 & (\phi\ominus(\psi\ominus\theta))_X\\
+		=& \phi_{G'F'(X)}\circ H(\psi\ominus\theta)_X\tag{Def: horizontal composition}\\
+		=& \phi_{G'F'(X)}\circ H(\psi_{F'(X)}\circ G(\theta_X))\tag{Ditto}\\
+		=& \phi_{G'F'(X)}\circ H(\psi_{F'(X)})\circ HG(\theta_X)\tag{Property of functor $H$}\\
+		=& (\phi\ominus\psi)_{F'(X)}\circ HG(\theta_X)\tag{Def: horizontal composition}\\
+		=& ((\phi\ominus\psi)\ominus\theta)_X\tag{Ditto},
+	\end{align*}
+	thus the horizontal composition satisfies associative law.
+\end{proof}
+
+
+\begin{lmm}[$\mathsf{ZF}$]\label{map}
+	For any nonempty sets $A,B$ and mapping $f:A\to B$, we have
+		\[\exists g:B\to A[g\circ f=\id_A]\iff f\ \text{is a injection}\ \iff\forall C\ne\varnothing\forall h,h':C\to A[f\circ h=f\circ h'\Longrightarrow h=h'],\]
+		\[\exists g:B\to A[f\circ g=\id_B]\Longrightarrow f\ \text{is a surjection}\ \iff\forall C\ne\varnothing\forall h,h':B\to C[h\circ f=h'\circ f\Longrightarrow h=h'],\]
+	and $f$ is a surjection $\Longrightarrow \exists g:B\to A[f\circ g=\id_B]$ can be proved in using the Axiom of Choice.
+	It's easy to see that $f$ is a bijection if and only if it has both left and right inversal mappings, and obviously the two inversal mappings are the same one, which is unique.
+\end{lmm}
+
+\begin{proof}
+	The proofs are shown in \cite[Theorem 3J]{set-2} (left parts) and \cite[(\S2.1) Proposition 2.2 \& Example 2.3]{cat-1} (right parts).
+\end{proof}
+
+
+\begin{defi}\label{inverse}
+	Consider $X,Y\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)$. If there exists a morphism $g\circ f=\1_X$, then we say $f$ is a \emph{section}, and $g$ is the \emph{left inverse} of it; if $g\in\Hom_\ca(Y,X)$ that $f\circ g=\1_Y$, then we say $f$ is a \emph{retraction}, and $g$ is the \emph{right inverse} of it. If $f$ has both inverses, then we say $f$ is a \emph{isomorphism}, it's easy to verify that the two inverses  are the same one, which is unique as well, so we say $f\iv:=g$ is the \emph{inverse} (\emph{inversal morphism}) of it. If there exists an isomorphism between two objects $X,Y\in\Ob(\ca)$, then we say they are \emph{isomorphic} and record it as $X\mathop{\simeq}\limits^\mathrm{M}Y$.
+	
+	What's more, it's easy to verify that the composition of isomorphisms is also an isomorphism (see \hyperref[transitivity]{Theorem 3}), so we can find that the collection of \emph{automorphisms} $\mathrm{Aut}_\ca(X):=\{f\in\Hom_\ca(X,X)\,|\,f\ \text{is an isomorphism}\}$ is a group $\left<\mathrm{Aut}_\ca(X),\circ,\1_X\right>$. If $f$ satisfies the \emph{left cancellation law}: $\forall Z\in\Ob(\ca)\forall g,h\in\Hom_\ca(Z,X)[f\circ g=f\circ h\iff g=h]$, then we say $f$ is \emph{monic} (or $f$ is a \emph{monomorphism}); if $f$ satisfies the \emph{right cancellation law}: $\forall Z\in\Ob(\ca)\forall g,h\in\Hom_\ca(Y,Z)[g\circ f=h\circ f\iff g=h]$, then we say $f$ is \emph{epic} (or $f$ is a \emph{epimorphism}). If $f$ is monic as well as epic, then we say $f$ is a \emph{bimorphism}. We call a category \emph{groupoid} if all the morphisms in it are isomorphisms, and call it is \emph{balanced} if all the bimorphisms in $\Mor(\ca)$ are isomorphisms.
+	
+	Consider a functor $F:\ca\to\D$, we can define the inverse of functor in the same way: If there exists a functor $G:\D\to\ca$ that $GF=\id_\ca$ and $FG=\id_\D$, then we say $F$ is an \emph{isomorphism functor} between $\ca$ and $\D$, and $F\iv:=G$ is the unique inverse (\emph{inversal functor}) of $F$. From \hyperref[map]{Lemma 1} we know that $F$ is isomorphic if and only if  $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are both bijection. If there exists an isomorphism functor between two categories $\ca$ and $\D$, we say they are \emph{isomorphic} and record it as $\ca\mathop{\simeq}\limits^\mathrm{F}\D$.
+	
+	(Please see \hyperref[identity transformation]{Corollary 1.1} first) Consider the following diagram:
+	\begin{equation}\begin{tikzcd}\label{iso}
+		\ca 
+		\arrow[rr, bend left =75, "F", ""' {name=U1, near start}, ""' {name=U2, near end}]
+		\arrow[rr, bend right=75, "G"', "" {name=D1, near start}, ""  {name=D2, near end}]
+		&&\D.
+		\arrow[Rightarrow, "\theta", from=U1, to=D1]
+		\arrow[Rightarrow, "\psi"  , from=D2, to=U2]
+    \end{tikzcd}\end{equation}
+	If $\psi\odot\theta=\tid^F$ and $\theta\odot\psi=\tid^G$, then we say $\theta$ is an \emph{isomorphism transformation} between $F$ and $G$, and $\theta\iv:=\psi$ is the unique inverse (\emph{inversal transformation}) of $\theta$, we record it as $\theta:F\mathop{\Rightarrow}\limits^{\sim}G$. If there exists an isomorphism transformation between two functors $F$ and $G$, we say they are \emph{isomorphic} and record it as $F\mathop{\simeq}\limits^\mathrm{T}G$.
+	
+	For functors $F:\ca\to\D$ and $G:\D\to\ca$, if $GF\mathop{\simeq}\limits^\mathrm{T}\id_{\ca}$ and $FG\mathop{\simeq}\limits^\mathrm{T}\id_{\D}$, then we say $G$ is the \emph{quasi-inverse} of $F$, and $F$ is a \emph{equivalence} between $\ca$ and $\D$. If there exists an equivalence between two categories $\ca$ and $\D$, we say they are \emph{equivalent} and record it as $\ca\sim\D$. We say categories $\ca$ and $\D$ are \emph{dual equivalent} if $\ca\op\sim\D$.
+	
+	If there is no confusion in some context, we abbrviate $\mathop{\simeq}\limits^\mathrm{M},\mathop{\simeq}\limits^\mathrm{F},\mathop{\simeq}\limits^\mathrm{T}$ as $\simeq$ and refer to ``isomorphism'', ``isomorphism functor'' and ``isomorphism transformation'' as ``isomorphism'' uniformly.
+\end{defi}
+
+
+\begin{cor}\label{identity transformation}
+	Observe \hyperref[iso]{diagram 5}, we have:
+	\begin{enumerate}
+		\item (For any $\theta$, $\psi$ and $\phi:F\Rightarrow F$) $\theta\odot\phi=\theta\wedge\phi\odot\psi=\psi$ if and only if $\phi=\tid^F$.
+		\item $\theta$ is an isomorphism transformation if and only if $\theta_X$ is an isomorphism for each $X\in\Ob(\ca)$.
+		\item If $\theta$ is an isomorphism, then $(\theta\iv)_X=(\theta_X)\iv$ for all $X\in\Ob(\ca)$, thus we abbreviate it as $\theta\iv_X$.
+	\end{enumerate}
+\end{cor}
+
+\begin{proof}
+	 It's easy to prove so using the definitions of identity transformation, vertical composition and identity morphism.
+\end{proof}
+
+
+\begin{lmm}
+	Observe \hyperref[ass]{commutative diagram 4}, we have
+	\begin{align}
+		& G(\tid^F_X)=\tid^G_{F(X)}=\tid^{GF}_X,\label{0}\\
+		& (\psi\ominus\tid^F)_X=\psi_{F(X)},\label{1}\\
+		& (\tid^H\ominus\psi)_Y=H(\psi_Y),\label{2}\\
+		& \tid^G\ominus\tid^F=\tid^{GF},\label{3}\\
+		& \text{if\ }\psi\text{\ and\ }\phi\text{\ are\ isomorphisms,\ then\ }\phi\ominus\psi\text{\ is\ also,\ and\ }(\phi\ominus\psi)\iv=\phi\iv\ominus\psi\iv,\label{4}\\
+		& F\simeq F'\Longrightarrow[G\simeq G'\Longrightarrow GF\simeq G'F']\wedge[H\simeq H'\Longrightarrow\wedge HG\simeq H'G'],\label{5}
+	\end{align}
+	for all $X\in\Ob(\ca_1),Y\in\Ob(\ca_2)$.
+\end{lmm}
+
+\begin{proof}
+	For \hyperref[0]{(6)}, using the definition of identity morphism, properties of morphism and functor we have
+		$$\tid^{GF}_X=\1_{GF(X)}=G(\1_{F(X)})=\tid^G_{F(X)}=G(\1_{F(X)})=G(\tid^F_X)$$
+	for all $X\in\Ob(\ca_1)$.
+	
+	For \hyperref[1]{(7)}, we have
+	\begin{align*}
+		 & (\psi\ominus\tid^F)_X\\
+		=& \psi_{F(X)}\circ G(\tid^F_X)\tag{Def: horizontal composition}\\
+		=& \psi_{F(X)}\circ \tid^G_{F(X)}\tag{\hyperref[0]{Formula 6}}\\
+		=& \psi_{F(X)}\tag{\hyperref[identity transformation]{Corollary 1.1}}
+	\end{align*}
+	for all $X\in\Ob(\ca_1)$.
+	
+	For \hyperref[2]{(8)}, we have
+	\begin{align*}
+		 & (\tid^H\ominus\psi)_Y\\
+		=& H(\psi_Y)\circ\tid^H_{G(Y)}\tag{Def: horizontal composition}\\
+		=& H(\psi_Y)\circ H(\tid^G_Y)\tag{\hyperref[0]{Formula 6}}\\
+		=& H(\psi_Y\circ\tid^G_Y)\tag{Property of functor $H$}\\
+		=& H(\psi_Y)\tag{\hyperref[identity transformation]{Corollary 1.1}}
+	\end{align*}
+	for all $Y\in\Ob(\ca_2)$.
+	
+	For \hyperref[3]{(9)}, we have 
+	\begin{align*}
+		 & (\tid^G\ominus\tid^F)_X\\
+		=& G(\tid^F_X)\circ\tid^G_{F(X)}\tag{Def: horizontal composition}\\
+		=& \tid^{GF}_X\circ\tid^{GF}_X\tag{\hyperref[identity transformation]{Corollary 1.1}}\\
+		=& \tid^{GF}_X\tag{\hyperref[0]{Formula 6}}
+	\end{align*}
+	for all $X\in\Ob(\ca_1)$.
+	
+	For \hyperref[4]{(10)}, we have
+	\begin{align*}
+		 & (\phi\ominus\psi)\odot(\phi\iv\ominus\psi\iv)\\
+		=& (\phi\iv\odot\phi)\ominus(\psi\iv\odot\psi)\tag{\hyperref[per]{Interchange law}}\\
+		=& \tid^H\ominus\tid^G\tag{Property of inverse}\\
+		=& \tid^{HG}.\tag{\hyperref[3]{Formula 9}}
+	\end{align*}
+	Similarly, we can prove $(\phi\iv\ominus\psi\iv)\odot(\phi\ominus\psi)=\tid^{H'G'}$.
+	
+	For \hyperref[5]{(11)}, we suppose that the three natural transformations are all isomorphisms, we claim that $\psi\ominus\theta:GF\equ G'F'$ and $\phi\ominus\psi:HG\equ H'G'$, it's trivial to prove using \hyperref[4]{formula 10}.
+\end{proof}
+
+
+\begin{thm}\label{transitivity}
+	If two particular morphisms/functors/transformations are isomorphic, than the isomorphism between them is unique. The composition of any morphisms/functors/transformations which are isomorphisms is an isomorphism, and the composition of any equivalences are equivalence. Therefore isomorphic objects, categories, functors and equivalent categories satisfy transitivity.
+\end{thm}
+
+\begin{proof}
+	The uniqueness is trivial to prove.
+	
+	Because the compositions of isomorphic morphisms, functors and transformations have some similar algebraic properties, we just need to prove the composition of isomorphic morphisms is an isomorphism:\\
+	Suppose isomorphisms $f\in\Hom_\ca(X,Y),g\in\Hom_\ca(Y,Z)$, we claim that $f\iv\circ g\iv$ is the inverse of $g\circ f\in\Hom_\ca(X,Z)$:
+		$$(g\circ f)\circ(f\iv\circ g\iv)=g\circ(f\circ f\iv)\circ g\iv=g\circ\1_Y
+		\circ g\iv=g\circ g\iv=\1_Z,$$
+		$$(f\iv\circ g\iv)\circ(g\circ f)=f\iv\circ(g\iv\circ g)\circ f=f\iv\circ\1_Y
+		\circ f=f\iv\circ f=\1_X.$$
+	
+	Observe the following diagram:
+	\[\begin{tikzcd}
+			\ca_1\arrow[loop left, "\id_{\ca_1}"]\arrow[bend left=30, r, "F"] &
+			\ca_2 \arrow[bend left=30, l, "F'"] \arrow[bend left=30, r, "G"] &
+			\ca_3 \arrow[bend left=30, l, "G'"] \arrow[loop right, "\id_{\ca_3}."]
+		\end{tikzcd}\]
+	We need to prove that if $F$ and $G$ are equivalence then $GF$ is also, we now assume that $F'F\simeq\id_{\ca_1}$, $FF'\simeq\id_{\ca_2}$, $G'G\simeq\id_{\ca_2}$ and $GG'\simeq\id_{\ca_3}$. Using \hyperref[5]{formula 11} we have
+	$$\id_{\ca_2}\simeq G'G\Longrightarrow\id_{\ca_1}\simeq F'F=F'\id_{\ca_2}F\simeq F'(G'G)F=(F'G')(GF),$$
+	$$\id_{\ca_2}\simeq F'F\Longrightarrow\id_{\ca_3}\simeq GG'=G\id_{\ca_2}G'\simeq G(FF')G'=(GF)(F'G').$$
+	Using transitivity of isomorphic functors, we have $\id_{\ca_1}\simeq(F'G')(GF)$ and $\id_{\ca_3}\simeq(GF)(F'G')$. Thus $GF$ is equivalence.
+\end{proof}
+
+
+\begin{cor}
+	If functors $G,G'$ are quasi-inverses of equivalence $F:\ca\to\D$, then $G\simeq G'$.
+\end{cor}
+
+\begin{proof}
+	Using \hyperref[5]{formula 11}, we have
+	\[G'F\simeq\id_\ca\wedge FG\simeq\id_\D\Longrightarrow G'=G'\id_\D\simeq G'(FG)=(G'F)G\simeq\id_\ca G=G,\]
+	thus we have $G'\simeq G$ using transitivity of isomorphic functors.
+\end{proof}
+
+
+\begin{cor}\label{isomorphism transformation}
+	Consider two morphisms $f$ and $g$ in $\ca$ which satisfy $\cod_\ca(f)=\dom_\ca(g)$.
+	\begin{enumerate}
+		\item Every section is monic, and every retraction is epic.
+		\item The composition of monomorphisms is monic, and the composition of epimorphisms is epic.
+		\item If $g\circ f$ is monic then $f$ is monic, if $g\circ f$ is epic then $g$ is epic.
+		\item The following propositions are equivalent:
+			\begin{itemize}
+				\item $f$ is an isomorphism.
+				\item $f$ is a monomorphism as well as a retraction.
+				\item $f$ is an epimorphism as well as a section.
+			\end{itemize}
+	\end{enumerate}
+\end{cor}
+
+\begin{proof}
+	The proofs are trivial, the details are shown in \cite[\S1.4]{cat-2}.
+\end{proof}
+
+
+\begin{exm}\label{exm3}
+	There are some examples of isomorphisms.
+	\begin{enumerate}
+		\item Consider two monomorphisms $f\in\Hom_\ca(X,Z)$ and $g\in\Hom_\ca(Y,Z)$, if $f$ and $g$ are \emph{factor through} each other each other, i.e., $\exists i\in\Hom_\ca(X,Y)\exists j\in\Hom_\ca(Y,X)[f=g\circ i\,\wedge\,g=f\circ j]$, then the \emph{factors} $i$ and $j$ are both isomorphisms and they are inverses to each other. In commutative diagram:
+		\[\begin{tikzcd}
+			X \arrow[->,>=stealth, rr, "i"', shift right] \arrow[->,>=stealth, rd, "f"'] & &
+			Y \arrow[->,>=stealth, ll, "j"', shift right] \arrow[->,>=stealth, ld, "g"]\\ &
+			Z. &
+		\end{tikzcd}\]
+		
+		\item \emph{Set category} $\mathsf{Set}$ (which the objects are all the sets, and morphisms are all the mappings), \emph{group category} $\mathsf{Grp}$ (which the objects are all the groups, and morphisms are all the group homomorphisms), \emph{vector space category} $\mathsf{Vect}(\Bbbk)$ (which the objects are all the vector spaces generated by field $\Bbbk$ and any abelian groups $V$, and the morphisms are all the linear mappings) are all balanced category.\\
+			However, consider a morphism, an inclusion ring homomorphism $f:\mathbb{Z}\to\mathbb{Q}$, in \emph{ring category} $\mathsf{Rng}$ (which the objects are all the rings and morphisms are all the ring homomorphisms). We will find that it is a epimorphism but not a retraction, because there is no inverse of it in $\Mor(\mathsf{Rng})$. So $\mathsf{Rng}$ isn't a balanced category. Actually, the \emph{topology category} $\mathsf{Top}$ (which the objects are all the topology spaces, and the morphisms are all the continuous mappings) is not neither.
+	\end{enumerate}
+\end{exm}
+
+
+\begin{defi}\label{different functors}
+	For functor $F:\ca\to\D$, we define:
+	\begin{itemize}
+		\item $F$ is \emph{essentially surjective} if $\forall Y\in\Ob(\D)\exists X\in\Ob(\ca)[F(X)\mathop{\simeq}\limits^\mathrm{M}F(Y)]$.
+		\item $F$ is \emph{faithful} if for all $X,Y\in\Ob(\ca)$, $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is injective.
+		\item $F$ is \emph{full} if for all $X,Y\in\Ob(\ca)$, $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is surjective.
+	\end{itemize}
+\end{defi}
+
+
+\begin{exm}\label{func}
+	Observe the following example.
+	\begin{enumerate}
+		\item For category $\ca$ and its subcategory $\ca'$, there exists an \emph{inclusion functor} $\iota:=\id_{\ca}\!\!\upharpoonright_{\ca'}:\ca'\to\ca$. It's obviously faithful, and $\iota$ is full if and only if $\ca'$ is a full subcategory.
+		
+		\item There are some \emph{forgetful functors} such as $\mathsf{Set}\to\mathsf{Rel}$, $\mathsf{Grp}\to\mathsf{Set}$, $\mathsf{Top}\to\mathsf{Set}$, $\mathsf{Ab}\to\mathsf{Grp}$ (where $\mathsf{Ab}$ means \emph{abelian group category}, which the objects are all the abelian groups, and the morphisms are all the abelian group homomorphisms), $\mathsf{Vect}(\Bbbk)\to\mathsf{Ab}$ (which forget field $\Bbbk$) that has a feature, that is, they forget some (order, algebraic, topological, etc.) structures. Except functor $\mathsf{Top}\to\mathsf{Set}$ (it is faithful as well as full because of discrete spaces), the other functors above are all faithful but not full.
+	\end{enumerate}
+\end{exm}
+
+
+\begin{lmm}\label{func ppt}
+	Consider a functor $F:\ca\to\D$, for any $X,Y\in\Ob(\ca)$ and morphism $f\in\Hom_\ca(X,Y)$, we have the following propositions:
+	\begin{enumerate}
+		\item $F(f)$ is a section/retraction if $f$ is a section/retraction; and the left/right inverse of $F(f)$ is $F(g)$, where $g$ is the left/right inverse of $f$.
+		\item When $F$ is faithful and full, we have $f$ is a section/retraction if $F(f)$ is a section/retraction; and the left/right inverse of $f$ is $g$, where $F(g)$ is the left/right inverse of $F(f)$.
+		\item $X\simeq Y\Longrightarrow F(X)\simeq F(Y)$; if $F$ is faithful and full, we have $F(X)\simeq F(Y)\Longrightarrow X\simeq Y$.
+		\item The composition of faithful/full/essentially-surjective functors is also faithful/full/essentially-surjective.
+	\end{enumerate}
+\end{lmm}
+
+\begin{proof}
+	Proof of {\bf Proposition 1} is trivial.
+	
+	For {\bf Proposition 2}, we only suppose that $F(f)$ is a section, the proof that $f$ is a retraction is similar:\\
+	Because $F(f)$ has a left inverse in $\Hom_\ca(F(Y),F(X))$ and $F$ is full, we have $F\upharpoonright_{\Hom_\ca(Y,X)}\to\Hom_\ca(F(Y),F(X))$ is surjective, so there exists $g\in\Hom_\ca(Y,X)$ that $F(g)$ is the left inverse of $F(f)$, that is,
+		$$F(\1^\ca_X)=\1^\D_{F(X)}=F(g)\circ^\D F(f)=F(g\circ^\ca f).$$
+	Because $F$ is faithful, that means, $F\upharpoonright_{\Hom_\ca(X,X)}$ is injective, then we have $\1^\ca_X=g\circ^\ca f$, thus $f$ is a section.
+	
+	Proof of {\bf Proposition 3} is trivial using Propositions 1 and 2.
+	
+	For {\bf Proposition 4}, it's trivial to prove that it is faithful of full, we now show that $F$ is essentially surjective:
+	Consider $G:\D\to\mathcal{E}$ is also essentially surjective, then we have
+		$$\forall e\in\Ob(\mathcal{E})\exists d\in\Ob(\D)[G(d)\simeq e].$$
+	What's more, there exists $c$ in $\ca$ that $F(c)\simeq d$, using proposition 3 we have $GF(c)\simeq G(d)\simeq e$. Thus we have $GF(c)\simeq e$ by the transitivity of equivalence. 
+\end{proof}
+
+
+\begin{defi}\label{skeleton}
+	A full subcategory $\ca'$ of category $\ca$ is a \emph{skeleton} of $\ca$ if $\forall X\in\Ob(\ca)\exists! Y\in\Ob(\ca')[X\mathop{\simeq}\limits^\mathrm{M}Y]$. If $\ca$ is the skeleton of itself, then we say it's a \emph{skeletal} category.
+\end{defi}
+
+
+\begin{lmm}\label{l4}
+	For category $\ca$, we have:
+	\begin{enumerate}
+		\item Suppose the Axiom of Choice,
+			\footnote{The Axiom of Choice in $\zfc$ provides choice functions based on sets, but not proper classes, so the categories in this proposition refer to the small categories. If you want this proposition to be true in any large categories, you need stronger axiom of choice, which is based on any class. However, it can't be discussed in $\zfc$.}
+			we have every nonempty category has at least one skeleton.
+		\item Every inclusion functor $\iota:\ca'\to\ca$ is an equivalence, where $\ca'$ is a skeleton of $\ca$; and we can find a quasi-inverse called \emph{skeletal functor} $\kappa:\ca\to\ca'$ of $\iota$, which gives the skeleton of $\ca$.
+		\item Any two skeletons of a category are equivalent.
+		\item $\ca$ is a skeletal category if and only if, for all the isomorphism $f\in\Mor(\ca)$, $\dom(f)=\cod(f)$.
+		\item Every faithful, full and essentially surjective functor between two skeletal categories is an isomorphism.
+	\end{enumerate}
+\end{lmm}
+
+\begin{proof}
+	Assume two categories $\ca$, $\D$ and a functor $F:\ca\to\D$.
+	\begin{enumerate}
+		\item Because the isomorphism relation among objects satisfies reflexivity, symmetry and transitivity, we can divide them into an equivalence (not functor, but a simple relation) class $\ca/\mathop{\simeq}\limits^\mathrm{M}$. Using the Axiom of Choice, we can construct a choice function which selects representative element in each $[X]$ for all $X\in\Ob(\ca)$. By preserving the representative elements and all the morphisms between any two of them, they form a full subcategory $\ca'$ of category $\ca$, and it's easy to see that $\ca'$ is the skeleton of $\ca$.
+		
+		\item Construct:\begin{itemize}
+			\item $\kappa\upharpoonright_{\Ob(\ca)}$ is the choice function mentioned in Proposition 1.
+			\item A natural transformation (we will verify this) $\theta:\id_\ca\Rightarrow\iota\kappa$ such that $\theta_X\in\Hom_\ca(X,\iota\kappa(X))$ is the isomorphism (it's uniquely exists) for all $X\in\Ob(X)$.
+			\item For all $X,Y\in\Ob(X,Y)$ and $f\in\Hom_\ca(X,Y)$, because $\theta_X$ is an isomorphism, we have
+				\[\begin{tikzcd}
+					\kappa(X)=\iota\kappa(X) \arrow[->,>=stealth, r, "\theta\iv_X"] &
+					\id_\ca(X) \arrow[->,>=stealth, r, "\id_\ca(f)"] &
+					\id_\ca(Y) \arrow[->,>=stealth, r, "\theta_Y"] &
+					\iota\kappa(Y)=\kappa(Y),
+				\end{tikzcd}\]
+				then we can define $\kappa(f):=\theta_Y\circ f\circ\theta\iv_X\in\Hom_{\ca'}(\kappa(X),\kappa(Y))$.
+			\end{itemize}
+		
+			Verify:\begin{itemize}
+				\item $\kappa$ is indeed a functor, i.e., it satisfies the three factors of functor on morphisms. It's trivial.
+				\item $\theta$ is indeed a natural transformation , i.e., we have the following commutative diagram:
+				\[\begin{tikzcd}
+					\id_\ca(X) \arrow[->,>=stealth,r,"\theta_X"] \arrow[->,>=stealth,d,"\id_\ca(f)=f"'] &
+					\iota\kappa(X) \arrow[->,>=stealth,d,"\iota\kappa(f)=\kappa(f)"]\\
+					\id_\ca(Y) \arrow[->,>=stealth,r,"\theta_Y"'] & \iota\kappa(Y).\\
+				\end{tikzcd}\]
+				We can easily verify the diagram by substituting the definition of $\kappa(f)$.
+				\item $\theta:id_\ca\equ\iota\kappa$, i.e., $\theta$ is an isomorphism, obviously.
+			\end{itemize}
+			
+			Thus $\id_\ca\simeq\iota\kappa$. On the other hand, because 
+				$$\forall X\in\Ob(\ca')[\kappa\iota(X)=X=\id_{\ca'}(X)]\wedge\forall f\in\Mor(\ca')[\kappa\iota(f)=f=\id_{\ca'}(f)],$$
+			then we have $\kappa\iota=\id_{\ca'}$, that implies $\kappa\iota\simeq\id_{\ca'}$. Thus $\ca'\sim\ca$.
+		
+		\item It's easy to prove so using Proposition 2 and the transitivity of equivalence (functor).
+		
+		\item We can easily prove so by assuming contradiction.
+		
+		\item Suppose $\ca$ and $\D$ are skeletal categories, and functor $F:\ca\to\D$ is faithful, full and essentially surjective. 
+			\begin{itemize}
+				\item {\bf $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ is surjective:} Because $F$ is essentially surjective, for all $Y\in\Ob(\D)$ there exists $X\in\Ob(\ca)[F(X)\simeq Y]$. Since $\D$ is a skeletal category, through Proposition 4, we know that $F(X)=Y$.
+				\item {\bf $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ is injective:} For any $X,Y\in\Ob(\ca)$, because of faithful and full functor $F$, if $F(X)=F(Y)$, then we have $X\simeq Y$ using \hyperref[func ppt]{Lemma 3.3}. Since $\D$ is a skeletal category, through Proposition 4, we have $X=Y$.
+				\item {\bf $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ is bijective:} Since $F$ is full and faithful, we have $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is bijective for each $X,Y\in\Ob(\ca)$. What's more, because $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ is bijective, it's easy to prove that $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ is bijective, too.
+			\end{itemize}
+			Because $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are bijective, $F$ is an isomorphism functor.
+	\end{enumerate}
+\end{proof}
+
+
+\begin{thm}\label{equ fct}
+	A functor between two categories is an equivalence if and only if it's faithful, full and essentially surjective.
+\end{thm}
+
+\begin{proof}
+	Let $F:\ca\to\D$ be a functor.
+	
+	($\Longrightarrow$) Let $F$ be a equivalence and $G:\D\to\ca$ be its quasi-inverse, so that there exist isomorphism transformations $\theta:GF\mathop{\Rightarrow}\limits^{\sim}\id_\ca$ and $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, and we assume that $X,Y\in\Ob(\ca)$.
+	
+	Notice the following commutative diagram:
+	\[\text{(a)}\quad\begin{tikzcd}
+		GF(X) \arrow[->,>=stealth, d, "GF(f)=GF(g)"'] \arrow[->,>=stealth, r, "\theta_X"] &
+		\id_\ca(X) \arrow[->,>=stealth, d, "\id_\ca(f)", bend left, shift right=1.5] \arrow[->,>=stealth, d, "\id_\ca(g)"', bend right, shift left=1.5]\\
+		GF(Y) \arrow[->,>=stealth, r, "\theta_Y"'] & \id_\ca(Y)
+	\end{tikzcd}\quad\text{and (b)}\quad\begin{tikzcd}
+		GF(X) \arrow[->,>=stealth, r, "\theta_X"] \arrow[->,>=stealth, d, "GF(t)"'] &
+		\id_\ca(X) \arrow[->,>=stealth, d, "\id_\ca(t)=t"]\\
+		GF(Y) \arrow[->,>=stealth, r, "\theta_Y"'] & \id_\ca(Y).
+	\end{tikzcd}\]
+	
+	\begin{itemize}
+		\item {\bf $F$ is faithful:} Let $f,g\in\Hom_\ca(X,Y)$ and $F(f)=F(g)\in\Hom_\D(F(X),F(Y))$, so $GF(f)=GF(g)$. Since $\theta:GF\mathop{\Rightarrow}\limits^{\sim}\id_\ca$, we have diagram (a), that means
+			$$\id_\ca(g)\circ\theta_X=\theta_Y\circ GF(g)=\theta_Y\circ GF(f)=\id_\ca(f)\circ\theta_X.$$
+		Because $\theta$ is an isomorphism transformation, using \hyperref[identity transformation]{Corollary 1.2} we have $\theta_X$ is an isomorphism, so it's a bimorphism (by \hyperref[isomorphism transformation]{Corollary 3.1}), then we can cancel it. Thus we have $g=\id_\ca(g)=\id_\ca(f)=f$. So $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\ca(F(X),F(Y))$ is injective, that means $F$ is faithful. For future reference, we observe that a similar proof shows that $G$ is faithful as well.
+	
+		\item {\bf $F$ is full:} For all $\varphi\in\Hom_\D(F(X),F(Y))$, we have $G(\varphi)\in\Hom_\D(GF(X),GF(Y))$. Since $\theta$ is an isomorphism, we have
+		\[\begin{tikzcd}
+			X=\id_\ca(X) \arrow[->,>=stealth, r, "\theta\iv_X"] &
+			GF(X) \arrow[->,>=stealth, r, "G(\varphi)"] &
+			GF(Y) \arrow[->,>=stealth, r, "\theta_Y"] & \id_\ca(Y)=Y.
+		\end{tikzcd}\]
+		so we can assume that $t=\theta_Y\circ G(\varphi)\circ\theta\iv_X\in\Hom_\ca(X,Y)$, we claim that $F(t)=\varphi$, so that $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\ca(F(X),F(Y))$ is surjective, that means $F$ is full:\\
+		It's easy to verify the diagram (b), thus we have
+			$$\theta_Y\circ G(\varphi)=\theta_Y\circ G(\varphi)\circ\theta\iv_X\circ\theta_X=t\circ\theta_X=\theta_Y\circ GF(t).$$
+		It's obvious that $\theta_Y$ is a bimorphism, then we can cancel it, thus we have $G(\varphi)=GF(t)$. Because $\varphi$ and $F(t)$ are in the same homology set, and $G$ is faithful, we have $F(t)=\varphi$.
+	
+		\item {\bf $F$ is essentially surjective:} For any $W\in\Ob(\D)$, since $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, we have $\psi_W\in\Hom_\D(FG(W),\id_\D(W))$ is an isomorphism, so $F(G(W))\mathop{\simeq}\limits^\mathrm{M}\id_\D(W)=W$. Hence, $F$ is essentially surjective.
+	\end{itemize}
+	
+	($\Longleftarrow$) (Need the Axiom of Choice) Consider the skeleton $\ca'$ of category $\ca$, the skeleton $\D'$ of category $\D$, inclusion functors $\iota_\ca:\ca'\to\ca$ and $\iota_\D:\D'\to\D$, skeletal functors $\kappa_\ca:\ca\to\ca'$ and $\kappa_\D:\D\to\D'$ (see the proof of \hyperref[l4]{Lemma 4.2} for the the methods of construction). We define $F':=\kappa_\D F\iota_\ca:\ca'\to\D'$.
+
+		Through \hyperref[l4]{Lemma 4.2} we know that $\kappa_\ca$ and $\kappa_\D$ are equivalence, so they are faithful, full and essentially surjective (we just proved this). Because $F$ and $\iota_\ca$ are faithful, full and essentially surjective as well, the functor $F'$ between skeletal categories is, too (by \hyperref[func ppt]{Lemma 3.4}). Using \hyperref[l4]{Lemma 4.5} we have $F'$ is an isomorphism functor. Suppose $G:=\iota_\ca{F'}\iv\kappa_\D:\D\to\ca$, we claim that $G$ is the quasi-inverse of $F$:
+			$$GF = \underbracket{\underline{(\iota_\ca{F'}\iv\kappa_\D) F}\id_\ca \simeq \underline{\iota_\ca{F'}\iv(\kappa_\D F}\iota_\ca)\kappa_\ca}_{\text{since }\id_\ca\simeq\iota_\ca\kappa_\ca} = \iota_\ca {F'}\iv F'\kappa_\ca = \iota_\ca\kappa_\ca\simeq\id_\ca,$$
+			$$FG = \underbracket{\id_\D\underline{F(\iota_\ca{F'}\iv\kappa_\D)} \simeq \iota_\D(\kappa_\D\underline{F\iota_\ca){F'}\iv\kappa_\D}}_{\text{since }\id_\D\simeq\iota_\D\kappa_\D} = \iota_\D F'{F'}\iv\kappa_\D = \iota_\D\kappa_\D \simeq \id_\D.$$
+		
+		Hence, $F$ is an equivalence.
+\end{proof}
+
+
+\begin{cor}
+	Two skeletal categories are equivalent if and only if they are isomorphic, therefore two categories are equivalent if and only if they have isomorphic skeletons.
+\end{cor}
+
+\begin{proof}
+	For the first half of the proposition, it's easy to prove so using \hyperref[equ fct]{Theorem 4} and \hyperref[l4]{Lemma 4.5}. For the last half of the proposition, it's easy to prove so using the first half of the proposition, \hyperref[l4]{Lemma 4.3} and the transitivity of equivalence.
+\end{proof}
+
+
+\bibliography{Reference}
+
+\end{document}
