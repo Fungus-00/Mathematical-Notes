@@ -1,14 +1,16 @@
 %Please compile this tex in "pdfLaTeX", and check the package before you compile it!
-%This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib" is in there, and please read the file "README.md" in that website before you complie this tex with reference.
+%This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib" and the file of a picture named "Cat.jpg" is in there, and please read the file "README.md" in that website before you complie this tex with reference.
+%The code was written with reference to https://github.com/wenweili/AlJabr-1/blob/master/chapter2.tex, and most of commutative diagrams are making from https://tikzcd.yichuanshen.de/.
 %It's too hard to draw the commutative diagrams QAQ
 
 \documentclass{article}
-\usepackage[scheme=plain]{ctex}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools}
+\usepackage[scheme=plain]{ctex}	%For Chinese
+\usepackage[dvipsnames]{xcolor}	%For some special colors
+\usepackage[utf8]{inputenc}	\usepackage[T2A]{fontenc}	%For Russian (in reference)
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools,multirow,graphicx,caption}
 	\geometry{a4paper,left=1.25cm,right=1.25cm,top=1.0cm,bottom=1.4cm}
-	\title{A Brief Introduction of Basic Category Theory}
-	\author{Fungus}
+	\title{A Brief Introduction of Basic Category Theory}	%基础范畴论简述
+	\author{Fungus}	%菌
 	\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=SkyBlue,citecolor=red}
 \bibliographystyle{plain}
 
@@ -21,6 +23,8 @@
 \newtheorem{lmm}{Lemma}
 \newtheorem{exm}{Example}
 \newtheorem{cor}{Corollary}
+\newtheorem*{Mark}{Mark}
+
 \newcommand\Ob{\mathrm{Ob}}
 \newcommand\Mor{\mathrm{Mor}}
 \newcommand\Hom{\mathrm{Hom}}
@@ -35,8 +39,20 @@
 \newcommand\D{\mathcal{D}}
 \newcommand\1{\mathit{1}}
 \newcommand\iv{^{-1}}
+\newcommand\tto{\mathop{\to}\limits^{\sim}}
 \newcommand\equ{\mathop{\Rightarrow}\limits^{\sim}}
-\nocite{alg-2}\nocite{cat-3}\nocite{cat-4}\nocite{cat-5}\nocite{cat-6-1}\nocite{cat-7}\nocite{cat-8}
+\newcommand\ev{\mathrm{ev}}
+
+\nocite{alg-2}\nocite{cat-3}\nocite{cat-4}\nocite{cat-5}\nocite{cat-6-1}\nocite{cat-7}\nocite{cat-8}\nocite{cat-9}\nocite{cat-10}
+
+\begin{figure}[ht] %The idea of inserting a picture of a cat came from "The Joy of Cat"
+	\centering
+	\includegraphics{Cat.jpg}	%Please download the file to the same path as this tex
+	\caption*{\bf Cat}
+	\label{Cat}
+\end{figure}
+
+The newest edition of the file and the source code of this note can be downloaded from \url{https://github.com/Fungus-00/Mathematical-Notes/}.
 
 These are my notes of basic category theory. The category theory which talk about in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice}), as for \emph{metacategory}, please see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Definition:Metacategory - ProofWiki}. The main sources of this text come from \cite[第二章]{alg-1}.
 
@@ -47,8 +63,8 @@ These are my notes of basic category theory. The category theory which talk abou
 		\item A collection $\Ob(\ca)$ of \emph{objects} $X,Y,Z\cdots$
 		\item A collection 
 			$$\Mor(\ca)=\bigsqcup_{X\in\Ob(\ca)}{\mathrm{sou}_\ca(X)}=\bigsqcup_{Y\in\Ob(\ca)}{\mathrm{tar}_\ca(Y)}=\bigsqcup_{X,Y\in\Ob(\ca)}{\Hom_\ca(X,Y)}$$
-			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{sou}_\ca(X)$ is the \emph{domain} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain} of its elements, and \emph{homology class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
-				\footnote{Strictly speaking, the morphism is composed by a 3-tuple $\left<X,f,Y\right>$, otherwise, it will cause confusion. For instance, in set category $\mathsf{Set}$ (see \hyperref[exm3]{Example 3.1}), if we don't discriminate the same mapping in different homology class, i.e., which have different codomains (such as $f:\{0\}\to\{0\}$ and $g:\{0\}\to\{0,1\}$ which satisfy $f(0)=g(0)=0$), then they are the same morphism, it will contradict the disjoint of homology class. Of course, for convenience, we will omit the 3-tuples when describing morphisms.}
+			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{sou}_\ca(X)$ is the \emph{domain} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain} of its elements, and \emph{hom-class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
+				\footnote{\label{sign} Strictly speaking, the morphism is composed by a 3-tuple $\left<X,f,Y\right>$, otherwise, it will cause confusion. For instance, in set category $\mathsf{Set}$ (see \hyperref[exm3]{Example 3.1}), if we don't discriminate the same mapping in different homology class, i.e., which have different codomains (such as $f:\{0\}\to\{0\}$ and $g:\{0\}\to\{0,1\}$ which satisfy $f(0)=g(0)=0$), then they are the same morphism, it will contradict the disjoint of homology class. Of course, for convenience, we will omit the 3-tuples when describing morphisms.}
 			For $W,X,Y,Z\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)\wedge g\in\Hom_\ca(Y,Z)$, the binary operation that defines \emph{composite morphism} $g\circ^\ca f$ (which is abbreviated as $g\circ f$) satisfies:
 			\begin{enumerate}
 				\item $g\circ f\in\Hom_\ca(X,Z)$;
@@ -71,31 +87,11 @@ These are my notes of basic category theory. The category theory which talk abou
 \end{defi}
 
 
-\begin{exm}
-	Here are some special examples.
-	\begin{enumerate}
-		\item Consider a category $\mathsf{Rel}$ in $\mathsf{ZF}$:
-		\begin{itemize}
-			\item Objects are all sets.
-			\item Homomorphism between any sets $X,Y$ is the power set of binary relations $\mathscr{P}(X\times Y)$.
-			\item The composition of morphisms is the composition of binary relations.
-			\item Identity morphism $\1_X$ is the identity mapping $\id_X=\{\left<x,x\right>|\,x\in X\}$.
-		\end{itemize}
-		Obviously, it's indeed a category. This example shows that the morphisms are not only mappings, they may have looser structures. Compared to this, morphisms are more like binary relations.
-	
-		\item Consider a set $S$, we can use it to construct a \emph{discrete category} $\mathsf{Disc}(S)$, which $\Ob(\mathsf{Disc}(S))=S$ and $\Mor(\mathsf{Disc}(S))=\{\1_x|\,x\in S\}$. A category without any objects and morphisms is called \emph{zero} category $\mathbf{0}$. A discrete category which has exactly one object is written as $\mathbf{1}$.
-	
-		\item Consider a category $\ca$ and its object $I$, the \emph{slice} category $\ca/I$ satisfies:
-		\begin{itemize}
-			\item Objects are all the morphisms $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(X,I)$;
-			\item $\Hom_{\ca/I}(f,g)=\{j\in\Hom_\ca(\dom_\ca(f),\dom_\ca(g))|\,g\circ^\ca j=f\}$;
-			\item $\1^{\ca/I}_f=\1^\ca_{\dom_\ca(f)}$;
-			\item if $\cod_{\ca/I}(f)=\dom_{\ca/I}(g)$ then $k\circ^{\ca/I}j=k\circ^\ca j$.
-		\end{itemize}
-		It's easy to verify that $\ca/I$ is indeed a category.\\
-		Similarly, we can define \emph{coslice} category $I/\ca$, whose the objects are $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(I,X)$, and $\Hom_{I/\ca}(f,g)=\{j\in\Hom_\ca(\cod_\ca(f),\cod_\ca(g))|\,j\circ^\ca f=g\}$.
-	\end{enumerate}
-\end{exm}
+\begin{Mark}
+	(Read the \hyperref[sign]{annotation} of this page first) Sometimes we have to define a mapping that is also a morphis, for instance, for sets $Y$ and $Z\subseteq X$, and a mapping $f:X\to Y$, we define a new mapping $g:=\{\left<x,f(x)\right>|x\in Z\}$, strictly speaking, we have defined a 3-tuple $\left<Z,g,Y\right>$ if the mapping is also a morphism, we now abbreviate it as ``$[Z\ni x\mapsto f(x)]$''. What's more, we will abbreviate the restriction $\{\left<x,f(x)\right>|\,x\in Z\}$ as ``$f\upharpoonright_Z$''.
+
+	Notice that the meanings of the above two markers are different, a classical example is, for a morphism $\beta$ and collection $M$ of some morphisms, $[M\ni\alpha\mapsto\alpha\circ\beta]$ means a new mapping (even morphism) created, but restriction $f\upharpoonright_Z$ is only a reduction of the original mapping.
+\end{Mark}
 
 
 \begin{defi}\label{subcategory, opposite category, small category}
@@ -113,7 +109,7 @@ These are my notes of basic category theory. The category theory which talk abou
 	\begin{itemize}
 		\item $\Ob(\ca\op)=\Ob(\ca)$;
 		\item $\forall X,Y\in\Ob(\ca\op)[\Hom_{\ca\op}(X,Y)=\Hom_{\ca}(Y,X)]$, i.e., $[f\in\Hom_\ca(X,Y)\iff f\op\in\Hom_{\ca\op}(X,Y)]$;
-		\item $\forall f,g\in\Mor(\ca)[g\op\circ\op f\op=(f\circ^\ca g)\op]$;
+		\item $\forall f,g\in\Mor(\ca)[g\circ\op f=f\circ^\ca g]$;
 		\item for all $X\in\Ob(\ca\op)$, the identity morphism $\1_X$ in $\ca\op$ is also that in $\ca$.
 	\end{itemize}
 	It's easy to verify that $\ca$ is also a category, and we have $(\ca\op)\op=\ca$. $\ca\op$ has the symmetric algebraic properties as $\ca$.
@@ -122,6 +118,58 @@ These are my notes of basic category theory. The category theory which talk abou
 	 \footnote{``$X$ is a set in $\zfc$'' has two meanings: we can prove $X$ exists in $\zfc$, i.e., $\zfc\vdash_\mathbf{H}\exists X$; or the existence of $X$ in $\zfc$ is consistent with $\zfc$, i.e., $\vdash_\mathbf{H}\mathrm\con(\zfc)\to\con(\zfc+\exists X)$, where $\mathbf{H}$ means the Frege-Hilbert first-order logic axiomatic system. The meaning in the text is the former. Of course, to prove the consistency, we often need to add extra axioms. The provability of $\zfc$ is limited, so we can only define the set in the model $(V_\kappa,\in)$, where $\kappa$ is the least strongly inaccessible cardinal, but that's enough. See \cite{set-1} for more details.}
 	and \emph{large} otherwise. A \emph{locally small} category is a category such that for all objects $X$ and $Y$, $\Hom(X,Y)$ is a set in $\zfc$, called a \emph{homset}.
 \end{defi}
+
+
+\begin{exm}
+	Here are some examples of category.
+	\begin{enumerate}
+		\item Consider a category $\mathsf{Rel}$ in $\mathsf{ZF}$:
+		\begin{itemize}
+			\item Objects are all sets.
+			\item Homomorphism between any sets $X,Y$ is the power set of binary relations $\mathscr{P}(X\times Y)$.
+			\item The composition of morphisms is the composition of binary relations.
+			\item Identity morphism $\1_X$ is the identity mapping $\id_X=\{\left<x,x\right>|\,x\in X\}$.
+		\end{itemize}
+		Obviously, it's indeed a category. This example shows that the morphisms are not only mappings, they may have looser structures. Compared to this, morphisms are more like binary relations.
+	
+		\item Consider a set $S$, we can use it to construct a \emph{discrete category} $\mathsf{Disc}(S)$, which $\Ob(\mathsf{Disc}(S))=S$ and $\Mor(\mathsf{Disc}(S))=\{\1_x|\,x\in S\}$. A category without any objects and morphisms is called \emph{zero} category $\mathbf{0}$. A discrete category which has exactly one object is written as $\mathbf{1}$.
+		
+		\item There are some classic examples of \emph{concrete} categories, which the objects are sets with (possible) structures, the morphisms are mappings ($\mathsf{Cat}$ is a little special) that preserve the structures, the composition of morphisms is the composition of mappings, and the identity morphisms are identity mappings:
+		\begin{table}[ht]\centering
+		\begin{tabular}{|l|l|l|}
+			\hline
+			\multicolumn{1}{|c|}{\textbf{Symbol}} & \multicolumn{1}{c|}{\textbf{Object}}       & \multicolumn{1}{c|}{\textbf{Morphism}}      \\ \hline
+			$\mathsf{Set}$                        & Set                                        & Mapping                                     \\ \hline
+			$\mathsf{Ord}$                        & Preordered set                             & \multirow{2}{*}{Order-preserving mapping}   \\ \cline{1-2}
+			$\mathsf{On}$                         & \multirow{2}{*}{Ordinal number}            &                                             \\ \cline{1-1} \cline{3-3} 
+			$\mathsf{Com}$                        &                                            & Computable function                         \\ \hline
+			$\mathsf{Mon}$                        & Monoid group                               & \multirow{3}{*}{Group homomorphism}         \\ \cline{1-2}
+			$\mathsf{Grp}$                        & Group                                      &                                             \\ \cline{1-2}
+			$\mathsf{Ab}$                         & Abelian group                              &                                             \\ \hline
+			$\mathsf{Rng}$                        & Ring                                       & Ring homomorphism                           \\ \hline
+			$\mathsf{Top}$                        & Topological space                          & \multirow{2}{*}{Continuous mapping}         \\ \cline{1-2}
+			$\mathsf{Met}$                        & Metric space                               &                                             \\ \hline
+			$_R\mathsf{Mod}$                      & Left module over the ring $R$              & \multirow{2}{*}{$R$-homomorphism}           \\ \cline{1-2}
+			$\mathsf{Mod}_R$                      & Right module over the ring $R$             &                                             \\ \hline
+			$\mathsf{Vect}_\Bbbk$                 & Vector space over the field $\Bbbk$        & \multirow{2}{*}{$\Bbbk$-Linear mapping}     \\ \cline{1-2}
+			$\mathsf{fVect}_\Bbbk$                & Finite vector space over the field $\Bbbk$ &                                             \\ \hline
+			$\mathsf{Man}$                        & Smooth manifolds                           & Smooth mapping                              \\ \hline
+			$\mathsf{Cat}$                        & Small category                             & \hyperref[functor]{Functor}                 \\ \hline
+		\end{tabular}
+		\end{table}\\	%Making from https://table.6cm.co/
+		Evidently, they are all large and locally small categories. And $\mathsf{On}/\mathsf{Grp}/\mathsf{Ab}/\mathsf{Met}/\mathsf{fVect}_\Bbbk$ is the full subcategory of $\mathsf{Ord}/\mathsf{Mon}/\mathsf{Grp}/\mathsf{Top}/\mathsf{Vect}_\Bbbk$.
+		
+		\item Consider a category $\ca$ and its object $I$, the \emph{slice} category $\ca/I$ satisfies:
+		\begin{itemize}
+			\item Objects are all the morphisms $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(X,I)$;
+			\item $\Hom_{\ca/I}(f,g)=\{j\in\Hom_\ca(\dom_\ca(f),\dom_\ca(g))|\,g\circ^\ca j=f\}$;
+			\item $\1^{\ca/I}_f=\1^\ca_{\dom_\ca(f)}$;
+			\item if $\cod_{\ca/I}(f)=\dom_{\ca/I}(g)$ then $k\circ^{\ca/I}j=k\circ^\ca j$.
+		\end{itemize}
+		It's easy to verify that $\ca/I$ is indeed a category.\\
+		Similarly, we can define \emph{coslice} category $I/\ca$, whose the objects are $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(I,X)$, and $\Hom_{I/\ca}(f,g)=\{j\in\Hom_\ca(\cod_\ca(f),\cod_\ca(g))|\,j\circ^\ca f=g\}$.
+	\end{enumerate}
+\end{exm}
 
 
 \begin{defi}\label{functor}
@@ -367,24 +415,24 @@ These are my notes of basic category theory. The category theory which talk abou
 \begin{defi}\label{inverse}
 	Consider $X,Y\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)$. If there exists a morphism $g\circ f=\1_X$, then we say $f$ is a \emph{section}, and $g$ is the \emph{left inverse} of it; if $g\in\Hom_\ca(Y,X)$ that $f\circ g=\1_Y$, then we say $f$ is a \emph{retraction}, and $g$ is the \emph{right inverse} of it. If $f$ has both inverses, then we say $f$ is a \emph{isomorphism}, it's easy to verify that the two inverses  are the same one, which is unique as well, so we say $f\iv:=g$ is the \emph{inverse} (\emph{inversal morphism}) of it. If there exists an isomorphism between two objects $X,Y\in\Ob(\ca)$, then we say they are \emph{isomorphic} and record it as $X\mathop{\simeq}\limits^\mathrm{M}Y$.
 	
-	What's more, it's easy to verify that the composition of isomorphisms is also an isomorphism (see \hyperref[transitivity]{Theorem 3}), so we can find that the collection of \emph{automorphisms} $\mathrm{Aut}_\ca(X):=\{f\in\Hom_\ca(X,X)\,|\,f\ \text{is an isomorphism}\}$ is a group $\left<\mathrm{Aut}_\ca(X),\circ,\1_X\right>$. If $f$ satisfies the \emph{left cancellation law}: $\forall Z\in\Ob(\ca)\forall g,h\in\Hom_\ca(Z,X)[f\circ g=f\circ h\iff g=h]$, then we say $f$ is \emph{monic} (or $f$ is a \emph{monomorphism}); if $f$ satisfies the \emph{right cancellation law}: $\forall Z\in\Ob(\ca)\forall g,h\in\Hom_\ca(Y,Z)[g\circ f=h\circ f\iff g=h]$, then we say $f$ is \emph{epic} (or $f$ is a \emph{epimorphism}). If $f$ is monic as well as epic, then we say $f$ is a \emph{bimorphism}. We call a category \emph{groupoid} if all the morphisms in it are isomorphisms, and call it is \emph{balanced} if all the bimorphisms in $\Mor(\ca)$ are isomorphisms.
+	What's more, it's easy to verify that the composition of isomorphisms is also an isomorphism (see \hyperref[transitivity]{Theorem 3}), so we can find that the collection of \emph{automorphisms} $\mathrm{Aut}_\ca(X):=\{f\in\Hom_\ca(X,X)\,|\,f\ \text{is an isomorphism}\}$ is a group $\left<\mathrm{Aut}_\ca(X),\circ,\1_X\right>$. If $f$ satisfies the \emph{left cancellation law}: $\forall Z\in\Ob(\ca)\forall g,h\in\Hom_\ca(Z,X)[f\circ g=f\circ h\iff g=h]$, then we say $f$ is \emph{monic} (or $f$ is a \emph{monomorphism}); similarly, if $f$ satisfies the \emph{right cancellation law}, then we say $f$ is \emph{epic} (or $f$ is a \emph{epimorphism}). If $f$ is monic as well as epic, then we say $f$ is a \emph{bimorphism}. We call a category \emph{groupoid} if all the morphisms in it are isomorphisms, and call it is \emph{balanced} if all the bimorphisms in $\Mor(\ca)$ are isomorphisms.
 	
-	Consider a functor $F:\ca\to\D$, we can define the inverse of functor in the same way: If there exists a functor $G:\D\to\ca$ that $GF=\id_\ca$ and $FG=\id_\D$, then we say $F$ is an \emph{isomorphism functor} between $\ca$ and $\D$, and $F\iv:=G$ is the unique inverse (\emph{inversal functor}) of $F$. From \hyperref[map]{Lemma 1} we know that $F$ is isomorphic if and only if  $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are both bijection. If there exists an isomorphism functor between two categories $\ca$ and $\D$, we say they are \emph{isomorphic} and record it as $\ca\mathop{\simeq}\limits^\mathrm{F}\D$.
+	Consider a functor $F:\ca\to\D$, we can define the inverse of functor in the same way: If there exists a functor $G:\D\to\ca$ that $GF=\id_\ca$ and $FG=\id_\D$, then we say $F$ is an \emph{functorial isomorphism} between $\ca$ and $\D$ and denote it as $F:\ca\tto\D$, and $F\iv:=G$ is the unique inverse (\emph{inversal functor}) of $F$. From \hyperref[map]{Lemma 1} we know that $F$ is a functorial isomorphism if and only if $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are both bijection. If there exists a functorial isomorphism between two categories $\ca$ and $\D$, we say they are \emph{isomorphic} and record it as $\ca\mathop{\simeq}\limits^\mathrm{F}\D$.
 	
 	(Please see \hyperref[identity transformation]{Corollary 1.1} first) Consider the following diagram:
 	\begin{equation}\begin{tikzcd}\label{iso}
 		\ca 
-		\arrow[rr, bend left =75, "F", ""' {name=U1, near start}, ""' {name=U2, near end}]
-		\arrow[rr, bend right=75, "G"', "" {name=D1, near start}, ""  {name=D2, near end}]
-		&&\D.
+		\arrow[r, bend left =75, "F", ""' {name=U1, near start}, ""' {name=U2, near end}]
+		\arrow[r, bend right=75, "G"', "" {name=D1, near start}, ""  {name=D2, near end}]
+		& \D.
 		\arrow[Rightarrow, "\theta", from=U1, to=D1]
 		\arrow[Rightarrow, "\psi"  , from=D2, to=U2]
     \end{tikzcd}\end{equation}
-	If $\psi\odot\theta=\tid^F$ and $\theta\odot\psi=\tid^G$, then we say $\theta$ is an \emph{isomorphism transformation} between $F$ and $G$, and $\theta\iv:=\psi$ is the unique inverse (\emph{inversal transformation}) of $\theta$, we record it as $\theta:F\mathop{\Rightarrow}\limits^{\sim}G$. If there exists an isomorphism transformation between two functors $F$ and $G$, we say they are \emph{isomorphic} and record it as $F\mathop{\simeq}\limits^\mathrm{T}G$.
+	If $\psi\odot\theta=\tid^F$ and $\theta\odot\psi=\tid^G$, then we say $\theta$ is a \emph{natural isomorphism} between $F$ and $G$, and $\theta\iv:=\psi$ is the unique inverse (\emph{inversal transformation}) of $\theta$, we record it as $\theta:F\mathop{\Rightarrow}\limits^{\sim}G$. If there exists a natural isomorphism between two functors $F$ and $G$, we say they are \emph{isomorphic} and record it as $F\mathop{\simeq}\limits^\mathrm{T}G$.
 	
 	For functors $F:\ca\to\D$ and $G:\D\to\ca$, if $GF\mathop{\simeq}\limits^\mathrm{T}\id_{\ca}$ and $FG\mathop{\simeq}\limits^\mathrm{T}\id_{\D}$, then we say $G$ is the \emph{quasi-inverse} of $F$, and $F$ is a \emph{equivalence} between $\ca$ and $\D$. If there exists an equivalence between two categories $\ca$ and $\D$, we say they are \emph{equivalent} and record it as $\ca\sim\D$. We say categories $\ca$ and $\D$ are \emph{dual equivalent} if $\ca\op\sim\D$.
 	
-	If there is no confusion in some context, we abbrviate $\mathop{\simeq}\limits^\mathrm{M},\mathop{\simeq}\limits^\mathrm{F},\mathop{\simeq}\limits^\mathrm{T}$ as $\simeq$ and refer to ``isomorphism'', ``isomorphism functor'' and ``isomorphism transformation'' as ``isomorphism'' uniformly.
+	If there is no confusion in some context, we abbrviate $\mathop{\simeq}\limits^\mathrm{M},\mathop{\simeq}\limits^\mathrm{F},\mathop{\simeq}\limits^\mathrm{T}$ as $\simeq$ and refer to ``isomorphism'', ``functorial isomorphism'' and ``natural isomorphism'' as ``isomorphism'' uniformly.
 \end{defi}
 
 
@@ -392,7 +440,7 @@ These are my notes of basic category theory. The category theory which talk abou
 	Observe \hyperref[iso]{diagram 5}, we have:
 	\begin{enumerate}
 		\item (For any $\theta$, $\psi$ and $\phi:F\Rightarrow F$) $\theta\odot\phi=\theta\wedge\phi\odot\psi=\psi$ if and only if $\phi=\tid^F$.
-		\item $\theta$ is an isomorphism transformation if and only if $\theta_X$ is an isomorphism for each $X\in\Ob(\ca)$.
+		\item $\theta$ is a natural isomorphism if and only if $\theta_X$ is an isomorphism for each $X\in\Ob(\ca)$.
 		\item If $\theta$ is an isomorphism, then $(\theta\iv)_X=(\theta_X)\iv$ for all $X\in\Ob(\ca)$, thus we abbreviate it as $\theta\iv_X$.
 	\end{enumerate}
 \end{cor}
@@ -462,13 +510,13 @@ These are my notes of basic category theory. The category theory which talk abou
 
 
 \begin{thm}\label{transitivity}
-	If two particular morphisms/functors/transformations are isomorphic, than the isomorphism between them is unique. The composition of any morphisms/functors/transformations which are isomorphisms is an isomorphism, and the composition of any equivalences are equivalence. Therefore isomorphic objects, categories, functors and equivalent categories satisfy transitivity.
+	If two particular morphisms/functors/transformations are isomorphic, than the isomorphism between them is unique. The composition of any isomorphisms/functorial isomorphism/natural isomorphism is also an isomorphism, and the composition of any equivalences are equivalence. Therefore isomorphic objects, categories, functors and equivalent categories satisfy transitivity.
 \end{thm}
 
 \begin{proof}
 	The uniqueness is trivial to prove.
 	
-	Because the compositions of isomorphic morphisms, functors and transformations have some similar algebraic properties, we just need to prove the composition of isomorphic morphisms is an isomorphism:\\
+	Because the compositions of isomorphisms, functorial isomorphisms and natural isomorphisms have similar algebraic properties, we just need to prove the composition of isomorphism is an isomorphism:\\
 	Suppose isomorphisms $f\in\Hom_\ca(X,Y),g\in\Hom_\ca(Y,Z)$, we claim that $f\iv\circ g\iv$ is the inverse of $g\circ f\in\Hom_\ca(X,Z)$:
 		$$(g\circ f)\circ(f\iv\circ g\iv)=g\circ(f\circ f\iv)\circ g\iv=g\circ\1_Y
 		\circ g\iv=g\circ g\iv=\1_Z,$$
@@ -484,7 +532,7 @@ These are my notes of basic category theory. The category theory which talk abou
 	We need to prove that if $F$ and $G$ are equivalence then $GF$ is also, we now assume that $F'F\simeq\id_{\ca_1}$, $FF'\simeq\id_{\ca_2}$, $G'G\simeq\id_{\ca_2}$ and $GG'\simeq\id_{\ca_3}$. Using \hyperref[5]{formula 11} we have
 	$$\id_{\ca_2}\simeq G'G\Longrightarrow\id_{\ca_1}\simeq F'F=F'\id_{\ca_2}F\simeq F'(G'G)F=(F'G')(GF),$$
 	$$\id_{\ca_2}\simeq F'F\Longrightarrow\id_{\ca_3}\simeq GG'=G\id_{\ca_2}G'\simeq G(FF')G'=(GF)(F'G').$$
-	Using transitivity of isomorphic functors, we have $\id_{\ca_1}\simeq(F'G')(GF)$ and $\id_{\ca_3}\simeq(GF)(F'G')$. Thus $GF$ is equivalence.
+	Using transitivity of functorial isomorphisms, we have $\id_{\ca_1}\simeq(F'G')(GF)$ and $\id_{\ca_3}\simeq(GF)(F'G')$. Thus $GF$ is equivalence.
 \end{proof}
 
 
@@ -495,11 +543,11 @@ These are my notes of basic category theory. The category theory which talk abou
 \begin{proof}
 	Using \hyperref[5]{formula 11}, we have
 	\[G'F\simeq\id_\ca\wedge FG\simeq\id_\D\Longrightarrow G'=G'\id_\D\simeq G'(FG)=(G'F)G\simeq\id_\ca G=G,\]
-	thus we have $G'\simeq G$ using transitivity of isomorphic functors.
+	thus we have $G'\simeq G$ using transitivity of functorial isomorphisms.
 \end{proof}
 
 
-\begin{cor}\label{isomorphism transformation}
+\begin{cor}\label{a natural isomorphism}
 	Consider two morphisms $f$ and $g$ in $\ca$ which satisfy $\cod_\ca(f)=\dom_\ca(g)$.
 	\begin{enumerate}
 		\item Every section is monic, and every retraction is epic.
@@ -529,8 +577,54 @@ These are my notes of basic category theory. The category theory which talk abou
 			Z. &
 		\end{tikzcd}\]
 		
-		\item \emph{Set category} $\mathsf{Set}$ (which the objects are all the sets, and morphisms are all the mappings), \emph{group category} $\mathsf{Grp}$ (which the objects are all the groups, and morphisms are all the group homomorphisms), \emph{vector space category} $\mathsf{Vect}(\Bbbk)$ (which the objects are all the vector spaces generated by field $\Bbbk$ and any abelian groups $V$, and the morphisms are all the linear mappings) are all balanced category.\\
-			However, consider a morphism, an inclusion ring homomorphism $f:\mathbb{Z}\to\mathbb{Q}$, in \emph{ring category} $\mathsf{Rng}$ (which the objects are all the rings and morphisms are all the ring homomorphisms). We will find that it is a epimorphism but not a retraction, because there is no inverse of it in $\Mor(\mathsf{Rng})$. So $\mathsf{Rng}$ isn't a balanced category. Actually, the \emph{topology category} $\mathsf{Top}$ (which the objects are all the topology spaces, and the morphisms are all the continuous mappings) is not neither.
+		\item For any concrete categories, all the morphisms in it satisfy the following implications:
+		\[\begin{tikzcd}
+			\text{section} \arrow[d, Rightarrow] &
+				\text{isomorphism} \arrow[r, Rightarrow] \arrow[l, Rightarrow] \arrow[d, Rightarrow] &
+				\text{retraction} \arrow[d, Rightarrow]\\
+			\text{injection} \arrow[d, Rightarrow] &
+				\text{bijection} \arrow[l, Rightarrow] \arrow[r, Rightarrow] \arrow[d, Rightarrow] &
+				\text{surjection} \arrow[d, Rightarrow]\\
+			\text{monomorphism} &
+				\text{bimorphism} \arrow[r, Rightarrow] \arrow[l, Rightarrow] &
+				\text{epimorphism}
+		\end{tikzcd}\]
+		
+		\item $\mathsf{Set}$, $\mathsf{Grp}$ are balanced category.(See \cite[Theorem 2.5.2]{cat-8})\\
+		However, consider a morphism, an inclusion ring homomorphism $f:\mathbb{Z}\to\mathbb{Q}$ in $\Mor(\mathsf{Rng})$. We will find that it is a epimorphism but not a retraction, because there is no inverse of it in $\Mor(\mathsf{Rng})$. So $\mathsf{Rng}$ isn't a balanced category. Actually, $\mathsf{Top}$ is not neither. (See \cite[p19]{cat-8})\\
+		There are more detailed examples of morphisms in \cite{cat-8}:
+		\begin{itemize}
+			\item Monic but not injective [Example 2.1.2].
+			\item Injective but not \emph{split monic} (a section) [Example 2.2.3, 2.2.4].
+			\item Epic but not surjective [Example 2.3.2],.
+			\item Surjective but not \emph{split epic} (a retraction) [Example 2.4.3, 2.4.4].
+		\end{itemize}
+		
+		\item Consider a topological space $(X,\mathcal{T})$, let $I=[0,1]$. We now define: 
+		\begin{itemize}
+			\item $f:I\to X$ is a \emph{path} from $x\in X$ to $y\in X$ if $f$ is a continuous mapping and $f(x)=0$, $f(y)=1$. We denote the collection of the paths in $X$ from $x$ to $y$ as $\mathrm{P}_X(x,y)$.
+			\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, the composition of paths $f*g:I\to X$ is defined as follow:
+				$$f*g(t)=\left\{\begin{aligned}
+					& f(2t)   & 0\leq t\leq\frac{1}{2},\\
+					& g(2t-1) & \frac{1}{2}\leq t\leq1.\\
+				\end{aligned}\right.$$
+				It's easy to see that the $f*g$ is also a path.
+			\item The identity path $\mathrm{Id}_x:=[I\ni t\mapsto x]\in\mathrm{P}(x,x)$. Note that $\mathrm{Id}_x*f=f=f*\mathrm{Id}_x$ is not always true.
+			\item The inverse of path $f$ from $x$ is defined as $f\iv:=[I\ni t\mapsto f(1-t)]$. Note that $f*f\iv=\mathrm{Id}_x=f\iv*f$ is not always true.
+			\item We call that the path $f$ and $g$ from $x$ to $y$ is homotopy, if there exists a continuous mapping $F:I^2\to X$ satisfies for all $s,t\in I$ that
+				$$F(s,0)=f(s)\wedge F(s,1)=g(s)\wedge F(0,t)=x\wedge F(1,t)=y.$$
+			We denote it as ``$f\mathop{\simeq}\limits^\mathrm{P}g$''.
+		\end{itemize}
+		
+		We can verify that the homotopy relation of paths is an equivalence relation (see \cite[定理 10.1.1]{top-1}), then we can construct a category $\Pi_1(X)$ called \emph{fundamental groupoid}:
+		\begin{itemize}
+			\item $\Ob(\Pi_1(X)):=X$.
+			\item $\Hom_{\Pi_1(X)}(x,y):=\mathrm{P}_X(x,y)/\mathop{\simeq}\limits^\mathrm{P}$.
+			\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, we define $[g]\circ^{\Pi_1(X)}[f]:=[g*f]$.
+			\item $\1^{\Pi_1(X)}_x:=[\mathrm{Id}_x]$ for all $x\in X$.
+			\item $[f]\iv:=[f\iv]$ for all $f\in\Mor(\Pi_1(X))$.
+		\end{itemize}
+		We can verify the definition is well. All the details of the content above are shown in \cite[\S10.1]{top-1}. Therefore, $\Pi_1(X)$ is indeed a groupoid. Moreover, note that the \emph {loop} $\mathrm{Aut}(x)=\Hom(x,x)$ is the fundamental group $\pi_1(X,x)$, then we can find that any fundamental groups $\pi_1(X,x)$ are all the \hyperref[skeleton]{skeletons} of $\Pi_1(X)$.
 	\end{enumerate}
 \end{exm}
 
@@ -543,16 +637,6 @@ These are my notes of basic category theory. The category theory which talk abou
 		\item $F$ is \emph{full} if for all $X,Y\in\Ob(\ca)$, $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is surjective.
 	\end{itemize}
 \end{defi}
-
-
-\begin{exm}\label{func}
-	Observe the following example.
-	\begin{enumerate}
-		\item For category $\ca$ and its subcategory $\ca'$, there exists an \emph{inclusion functor} $\iota:=\id_{\ca}\!\!\upharpoonright_{\ca'}:\ca'\to\ca$. It's obviously faithful, and $\iota$ is full if and only if $\ca'$ is a full subcategory.
-		
-		\item There are some \emph{forgetful functors} such as $\mathsf{Set}\to\mathsf{Rel}$, $\mathsf{Grp}\to\mathsf{Set}$, $\mathsf{Top}\to\mathsf{Set}$, $\mathsf{Ab}\to\mathsf{Grp}$ (where $\mathsf{Ab}$ means \emph{abelian group category}, which the objects are all the abelian groups, and the morphisms are all the abelian group homomorphisms), $\mathsf{Vect}(\Bbbk)\to\mathsf{Ab}$ (which forget field $\Bbbk$) that has a feature, that is, they forget some (order, algebraic, topological, etc.) structures. Except functor $\mathsf{Top}\to\mathsf{Set}$ (it is faithful as well as full because of discrete spaces), the other functors above are all faithful but not full.
-	\end{enumerate}
-\end{exm}
 
 
 \begin{lmm}\label{func ppt}
@@ -580,6 +664,34 @@ These are my notes of basic category theory. The category theory which talk abou
 		$$\forall e\in\Ob(\mathcal{E})\exists d\in\Ob(\D)[G(d)\simeq e].$$
 	What's more, there exists $c$ in $\ca$ that $F(c)\simeq d$, using proposition 3 we have $GF(c)\simeq G(d)\simeq e$. Thus we have $GF(c)\simeq e$ by the transitivity of equivalence. 
 \end{proof}
+
+
+\begin{exm}\label{func}
+	Observe the following example.
+	\begin{enumerate}
+		\item For category $\ca$ and its subcategory $\ca'$, there exists an \emph{inclusion functor} $\iota:=\id_{\ca}\!\!\upharpoonright_{\ca'}:\ca'\to\ca$. It's obviously faithful, and $\iota$ is full if and only if $\ca'$ is a full subcategory. There is a classical example: inclusion functor $F:\mathsf{Vect}_\Bbbk\to\mathsf{fVect}_\Bbbk$.\\
+		Let $\ca$ and $\D$ be categories. A \emph{contravariant functor} $F$ from $\ca$ to $\D$ is a functor $F:\ca\op\to\D$. What's more, for functor $F:\ca\to\D$, we can define $F\op:\ca\op\to\D\op$.
+		
+		\item There are some \emph{forgetful functors} such as $\mathsf{Set}\to\mathsf{Rel}$, $\mathsf{Grp}\to\mathsf{Set}$, $\mathsf{Top}\to\mathsf{Set}$, $\mathsf{Ab}\to\mathsf{Grp}$, $\mathsf{Vect}(\Bbbk)\to\mathsf{Ab}$ (which forget field $\Bbbk$) that has a feature, that is, they forget some (order, algebraic, topological, etc.) structures. The functors above are all faithful but not full.
+		
+		\item For vector space category $\mathsf{Vect}_\Bbbk$, we define a functor $D:\mathsf{Vect}\op_\Bbbk\to\mathsf{Vect}_\Bbbk$:\\
+		For all $V\in\mathsf{Vect}_\Bbbk$, we define the \emph{dual vector space} of $V$: $D(V):=V^\vee:=\Hom_\Bbbk(V,\Bbbk)=\{\Bbbk-\text{linear mapping}\ V\to\Bbbk\}$, see \href{https://en.wikipedia.org/wiki/Dual_space#Algebraic_dual_space}{Algebraic dual space - Dual space - Wikipedia} for the operation of it. It's trivial to verify that the dual vector space is indeed a vector space.\\
+		For all $f\in\Hom_\Bbbk(V,U)$ we define $D(f):=f^\vee=[U^\vee\ni\lambda\mapsto\lambda\circ f]\in\Hom_\Bbbk(U^\vee,V^\vee)$, in other words, $f^\vee$ is a mapping from $U^\vee$ to $V^\vee$ which satisfies $f^\vee(\lambda)=\lambda\circ f$ for all $\lambda\in U^\vee$. It's trivial to verify that $f$ is linear.\\
+		We can easily verify that $D$ is indeed a functor. Consider $D\op:\mathsf{Vect}_\Bbbk\to(\mathsf{Vect}\op_\Bbbk)\op=\mathsf{Vect}_\Bbbk$, then we can define the \emph{dual space contravariant functor} $FF\op:\mathsf{Vect}_\Bbbk\to\mathsf{Vect}_\Bbbk$. Similarly, we can define the finite dual space contravariant functor $DD\op:\mathsf{fVect}_\Bbbk\to\mathsf{fVect}_\Bbbk$.
+	\end{enumerate}
+\end{exm}
+
+
+\begin{cor}\label{op}
+	For \begin{tikzcd}\ca_1 \arrow[r, "F"] & \ca_2 \arrow[r, "G"] & \ca_3\end{tikzcd}, we have:
+	\begin{enumerate}
+		\item $F:\ca_1\tto\ca_2\Longrightarrow F\op:\ca\op_1\tto\ca\op_2$;
+		\item $(F\op)\op=F$;
+		\item $(FG)\op=F\op G\op$;
+		\item $F\simeq G\Longrightarrow F\op\simeq G\op$;
+		\item $\id\op_{\ca_1}=\id_{\ca\op_1}$.
+	\end{enumerate}
+\end{cor}
 
 
 \begin{defi}\label{skeleton}
@@ -644,7 +756,7 @@ These are my notes of basic category theory. The category theory which talk abou
 				\item {\bf $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ is injective:} For any $X,Y\in\Ob(\ca)$, because of faithful and full functor $F$, if $F(X)=F(Y)$, then we have $X\simeq Y$ using \hyperref[func ppt]{Lemma 3.3}. Since $\D$ is a skeletal category, through Proposition 4, we have $X=Y$.
 				\item {\bf $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ is bijective:} Since $F$ is full and faithful, we have $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is bijective for each $X,Y\in\Ob(\ca)$. What's more, because $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ is bijective, it's easy to prove that $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ is bijective, too.
 			\end{itemize}
-			Because $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are bijective, $F$ is an isomorphism functor.
+			Because $F\upharpoonright_{\Ob(\ca)}\to\Ob(\D)$ and $F\upharpoonright_{\Mor(\ca)}\to\Mor(\D)$ are bijective, $F$ is a functorial isomorphism.
 	\end{enumerate}
 \end{proof}
 
@@ -656,7 +768,7 @@ These are my notes of basic category theory. The category theory which talk abou
 \begin{proof}
 	Let $F:\ca\to\D$ be a functor.
 	
-	($\Longrightarrow$) Let $F$ be a equivalence and $G:\D\to\ca$ be its quasi-inverse, so that there exist isomorphism transformations $\theta:GF\mathop{\Rightarrow}\limits^{\sim}\id_\ca$ and $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, and we assume that $X,Y\in\Ob(\ca)$.
+	($\Longrightarrow$) Let $F$ be a equivalence and $G:\D\to\ca$ be its quasi-inverse, so that there exist natural isomorphisms $\theta:GF\mathop{\Rightarrow}\limits^{\sim}\id_\ca$ and $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, and we assume that $X,Y\in\Ob(\ca)$.
 	
 	Notice the following commutative diagram:
 	\[\text{(a)}\quad\begin{tikzcd}
@@ -672,9 +784,9 @@ These are my notes of basic category theory. The category theory which talk abou
 	\begin{itemize}
 		\item {\bf $F$ is faithful:} Let $f,g\in\Hom_\ca(X,Y)$ and $F(f)=F(g)\in\Hom_\D(F(X),F(Y))$, so $GF(f)=GF(g)$. Since $\theta:GF\mathop{\Rightarrow}\limits^{\sim}\id_\ca$, we have diagram (a), that means
 			$$\id_\ca(g)\circ\theta_X=\theta_Y\circ GF(g)=\theta_Y\circ GF(f)=\id_\ca(f)\circ\theta_X.$$
-		Because $\theta$ is an isomorphism transformation, using \hyperref[identity transformation]{Corollary 1.2} we have $\theta_X$ is an isomorphism, so it's a bimorphism (by \hyperref[isomorphism transformation]{Corollary 3.1}), then we can cancel it. Thus we have $g=\id_\ca(g)=\id_\ca(f)=f$. So $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\ca(F(X),F(Y))$ is injective, that means $F$ is faithful. For future reference, we observe that a similar proof shows that $G$ is faithful as well.
+		Because $\theta$ is a natural isomorphism, using \hyperref[identity transformation]{Corollary 1.2} we have $\theta_X$ is an isomorphism, so it's a bimorphism (by \hyperref[a natural isomorphism]{Corollary 3.1}), then we can cancel it. Thus we have $g=\id_\ca(g)=\id_\ca(f)=f$. So $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\ca(F(X),F(Y))$ is injective, that means $F$ is faithful. For future reference, we observe that a similar proof shows that $G$ is faithful as well.
 	
-		\item {\bf $F$ is full:} For all $\varphi\in\Hom_\D(F(X),F(Y))$, we have $G(\varphi)\in\Hom_\D(GF(X),GF(Y))$. Since $\theta$ is an isomorphism, we have
+		\item {\bf $F$ is full:} For all $\varphi\in\Hom_\D(F(X),F(Y))$, we have $G(\varphi)\in\Hom_\D(GF(X),GF(Y))$. Since $\theta$ is a natural isomorphism, we have
 		\[\begin{tikzcd}
 			X=\id_\ca(X) \arrow[->,>=stealth, r, "\theta\iv_X"] &
 			GF(X) \arrow[->,>=stealth, r, "G(\varphi)"] &
@@ -683,14 +795,14 @@ These are my notes of basic category theory. The category theory which talk abou
 		so we can assume that $t=\theta_Y\circ G(\varphi)\circ\theta\iv_X\in\Hom_\ca(X,Y)$, we claim that $F(t)=\varphi$, so that $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\ca(F(X),F(Y))$ is surjective, that means $F$ is full:\\
 		It's easy to verify the diagram (b), thus we have
 			$$\theta_Y\circ G(\varphi)=\theta_Y\circ G(\varphi)\circ\theta\iv_X\circ\theta_X=t\circ\theta_X=\theta_Y\circ GF(t).$$
-		It's obvious that $\theta_Y$ is a bimorphism, then we can cancel it, thus we have $G(\varphi)=GF(t)$. Because $\varphi$ and $F(t)$ are in the same homology set, and $G$ is faithful, we have $F(t)=\varphi$.
+		It's obvious that $\theta_Y$ is a bimorphism, then we can cancel it, thus we have $G(\varphi)=GF(t)$. Because $\varphi$ and $F(t)$ are in the same hom-class, and $G$ is faithful, we have $F(t)=\varphi$.
 	
 		\item {\bf $F$ is essentially surjective:} For any $W\in\Ob(\D)$, since $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, we have $\psi_W\in\Hom_\D(FG(W),\id_\D(W))$ is an isomorphism, so $F(G(W))\mathop{\simeq}\limits^\mathrm{M}\id_\D(W)=W$. Hence, $F$ is essentially surjective.
 	\end{itemize}
 	
 	($\Longleftarrow$) (Need the Axiom of Choice) Consider the skeleton $\ca'$ of category $\ca$, the skeleton $\D'$ of category $\D$, inclusion functors $\iota_\ca:\ca'\to\ca$ and $\iota_\D:\D'\to\D$, skeletal functors $\kappa_\ca:\ca\to\ca'$ and $\kappa_\D:\D\to\D'$ (see the proof of \hyperref[l4]{Lemma 4.2} for the the methods of construction). We define $F':=\kappa_\D F\iota_\ca:\ca'\to\D'$.
 
-		Through \hyperref[l4]{Lemma 4.2} we know that $\kappa_\ca$ and $\kappa_\D$ are equivalence, so they are faithful, full and essentially surjective (we just proved this). Because $F$ and $\iota_\ca$ are faithful, full and essentially surjective as well, the functor $F'$ between skeletal categories is, too (by \hyperref[func ppt]{Lemma 3.4}). Using \hyperref[l4]{Lemma 4.5} we have $F'$ is an isomorphism functor. Suppose $G:=\iota_\ca{F'}\iv\kappa_\D:\D\to\ca$, we claim that $G$ is the quasi-inverse of $F$:
+		Through \hyperref[l4]{Lemma 4.2} we know that $\kappa_\ca$ and $\kappa_\D$ are equivalence, so they are faithful, full and essentially surjective (we just proved this). Because $F$ and $\iota_\ca$ are faithful, full and essentially surjective as well, the functor $F'$ between skeletal categories is, too (by \hyperref[func ppt]{Lemma 3.4}). Using \hyperref[l4]{Lemma 4.5} we have $F'$ is a functorial isomorphism. Suppose $G:=\iota_\ca{F'}\iv\kappa_\D:\D\to\ca$, we claim that $G$ is the quasi-inverse of $F$:
 			$$GF = \underbracket{\underline{(\iota_\ca{F'}\iv\kappa_\D) F}\id_\ca \simeq \underline{\iota_\ca{F'}\iv(\kappa_\D F}\iota_\ca)\kappa_\ca}_{\text{since }\id_\ca\simeq\iota_\ca\kappa_\ca} = \iota_\ca {F'}\iv F'\kappa_\ca = \iota_\ca\kappa_\ca\simeq\id_\ca,$$
 			$$FG = \underbracket{\id_\D\underline{F(\iota_\ca{F'}\iv\kappa_\D)} \simeq \iota_\D(\kappa_\D\underline{F\iota_\ca){F'}\iv\kappa_\D}}_{\text{since }\id_\D\simeq\iota_\D\kappa_\D} = \iota_\D F'{F'}\iv\kappa_\D = \iota_\D\kappa_\D \simeq \id_\D.$$
 		
@@ -699,13 +811,49 @@ These are my notes of basic category theory. The category theory which talk abou
 
 
 \begin{cor}
-	Two skeletal categories are equivalent if and only if they are isomorphic, therefore two categories are equivalent if and only if they have isomorphic skeletons.
+	(Without the Axiom of Choice) Two skeletal categories are equivalent if and only if they are isomorphic, therefore two categories are equivalent if and only if they have isomorphic skeletons.
 \end{cor}
 
 \begin{proof}
 	For the first half of the proposition, it's easy to prove so using \hyperref[equ fct]{Theorem 4} and \hyperref[l4]{Lemma 4.5}. For the last half of the proposition, it's easy to prove so using the first half of the proposition, \hyperref[l4]{Lemma 4.3} and the transitivity of equivalence.
 \end{proof}
 
+
+\begin{exm}\label{dual v}
+	Consider vector space category $\mathsf{Vect}_\Bbbk$ and it's full subcategory $\mathsf{fVect}_\Bbbk$. We have defined the dual space contravariant functor $DD\op$ in \hyperref[func]{Example 4.3}. We now define a mapping $\ev_V:V\to DD\op(V)=(V^\vee)^\vee$ such that $\ev_V(x)=[V^\vee\ni\lambda\mapsto\lambda(x)]$ for all $x\in V$. It's easy to verify that $\ev_V$ is an injective linear mapping, and $\ev_V$ is bijective if and only if $V$ is a finite dimensional (see \cite[\S1.3 定理 2]{alg-3}).
+	
+	For any $V,U\in\mathsf{Vect}_\Bbbk$, we have the following diagram：
+	\[\begin{tikzcd}
+		V \arrow[->,>=stealth,d, "f"'] \arrow[->,>=stealth,r, "\ev_V"] & (V^\vee)^\vee \arrow[->,>=stealth,d, "(f^\vee)^\vee"]\\
+		U \arrow[->,>=stealth,r, "\ev_U"'] & (U^\vee)^\vee.
+	\end{tikzcd}\]
+	To verify that, we just need to prove that $\forall x\in V[(f^\vee)^\vee\circ\ev_V(x)=\ev_U\circ f(x)\in\Hom_\Bbbk(U^\vee,\Bbbk)]$:
+		$$(f^\vee)^\vee\circ\ev_V(x)=(f^\vee)^\vee([(V^\vee)^\vee\ni\alpha\mapsto\alpha(x)])=[(V^\vee)^\vee\ni\alpha\mapsto\alpha(x)]\circ f^\vee=[U^\vee\ni\beta\mapsto\underbracket{f^\vee(\beta)}_{=\beta\circ f}(x)],$$
+		$$\ev_U\circ f(x)=\ev_U(f(x))=[U^\vee\ni\beta\mapsto\big(\beta\circ f\big)(x)].$$
+	Thus $\ev$ is a natural transformation, and when we restrict it to $\mathsf{fVect}_\Bbbk$, we have a natural isomorphism $\ev:\id_{\mathsf{fVect}_\Bbbk}\equ DD\op$, using \hyperref[op]{Corollary 4} we have $\id_{\mathsf{fVect}\op_\Bbbk}\simeq D\op D$. Thus $D:\mathsf{fVect}\op_\Bbbk\to\mathsf{fVect}_\Bbbk$ is the equivalence and $D\op$ is its quasi-inverse.
+\end{exm}
+
+
+\begin{defi}
+	For category $\ca$ and its objects $X$ and $Z$,
+	\begin{itemize}
+		\item we say $X$ is \emph{initial} if $\forall Y\in\Ob(\ca)\exists!f\in\Mor(\ca)[f\in\Hom_\ca(X,Y)]$;
+		\item we say $X$ is \emph{terminal} if $\forall Y\in\Ob(\ca)\exists!f\in\Mor(\ca)[f\in\Hom_\ca(Y,X)]$;
+		\item a initial and terminal object is called \emph{zero object};
+		\item suppose $0\in\Ob(\ca)$ is a zero object, if $f\in\Hom_\ca(X,0)$ and $g\in\Hom_\ca(0,Z)$, then we say $g\circ f$ is a \emph{zero morphism} and denote it as ``$0_{XZ}$''.
+	\end{itemize}
+\end{defi}
+
+
+\begin{cor}
+	In a category $\ca$, all the initial objects are isomorphic, and all the terminal objects are isomorphic.
+\end{cor}
+
+\begin{proof}
+	If $X,Y\in\Ob(\ca)$ is initial, then $\Hom_\ca(X,X)=\{\1_X\}$ and $\Hom_\ca(Y,Y)=\{\1_Y\}$. Suppose $f\in\Hom_\ca$ and $g\in\Hom_\ca(Y,X)$, there must be $g\circ f=\1_X$ and $f\circ g=1_Y$, thus $f$ and $g$ are the isomorphism.
+	
+	The proof about terminal objects is similar.
+\end{proof}
 
 \bibliography{Reference}
 
