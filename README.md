@@ -3,11 +3,11 @@ Using Language: Chinese, English
 
 这里是菌（Fungus）的数学文章/笔记存放处，于2020年8月1日开通。
 
-上传文件格式可能包括 `.txt` , `.tex` , `.pdf` , `.cls` , `.bib` 等。
+上传文件格式可能包括 `.txt` , `.tex` , `.pdf` , `.cls` , `.bib` , `.jpg` 等。
 
-对于 `tex.` 格式文件，推荐使用[TeX Live](https://tug.org/texlive)编译，英文文章建议使用pdfLaTeX排版，中文文章建议使用XeLaTeX排版。
+对于 `tex.` 格式文件，推荐使用[TeX Live](https://tug.org/texlive)编译，英文文章建议使用pdfLaTeX排版，中文文章建议使用XeLaTeX排版，编译前请阅读首几行的注释并检查宏包是否完整。
 
-关于参考资料库BibTex在Tex中编译的方式，参见[BibTeX的使用方法_遇见即为缘-CSDN博客](https://blog.csdn.net/jianghao_ava/article/details/89578348)。
+关于参考资料库BibTex在Tex中编译的方式，参见[BibTeX的使用方法_遇见即为缘-CSDN博客](https://blog.csdn.net/jianghao_ava/article/details/89578348)。请将编译所需材料同待编译的Tex文件置于同一路径内，且切勿轻易修改相关文件名。
 
 上传的笔记大都是完整、严格、经过认真修改的笔记，作者在编写它们时投入了不少精力。当然，完整不一定是涵盖内容丰富，我不总有那么多时间编写，但至少能保证每个上传的文章中的内容前后一致、逻辑完整。
 
