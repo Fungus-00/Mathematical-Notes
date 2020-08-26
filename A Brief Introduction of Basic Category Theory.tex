@@ -1,14 +1,16 @@
 %Please compile this tex in "pdfLaTeX", and check the package before you compile it!
 %This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib" and the file of a picture named "Cat.jpg" is in there, and please read the file "README.md" in that website before you complie this tex with reference.
 %The code was written with reference to https://github.com/wenweili/AlJabr-1/blob/master/chapter2.tex, and most of commutative diagrams are making from https://tikzcd.yichuanshen.de/.
+%The note including code is 100% finished by myself.
 %It's too hard to draw the commutative diagrams QAQ
 
 \documentclass{article}
 \usepackage[scheme=plain]{ctex}	%For Chinese
 \usepackage[dvipsnames]{xcolor}	%For some special colors
 \usepackage[utf8]{inputenc}	\usepackage[T2A]{fontenc}	%For Russian (in reference)
-\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools,multirow,graphicx,caption}
-	\geometry{a4paper,left=1.25cm,right=1.25cm,top=1.0cm,bottom=1.4cm}
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools,multirow,graphicx,caption} %"tikz-cd" for commutative diagram, "enumerate" for enumerate environment, "mathtools" for underbracket, "multirow" for table, "graphicx" "caption" for picture
+	\geometry{a4paper,left=1.25cm,right=1.25cm,top=1.0cm,bottom=1.20cm}
+	\setlength{\footskip}{18pt}	%For the height of the pagination
 	\title{A Brief Introduction of Basic Category Theory}	%基础范畴论简述
 	\author{Fungus}	%菌
 	\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=SkyBlue,citecolor=red}
@@ -33,6 +35,7 @@
 \newcommand\id{\mathrm{id}}
 \newcommand\op{^\mathrm{op}}
 \newcommand\zfc{\mathsf{ZFC}}
+\newcommand\AC{\mathsf{AC}}
 \newcommand\con{\mathrm{Con}}
 \newcommand\tid{\mathbf{id}}
 \newcommand\ca{\mathcal{C}}
@@ -42,19 +45,20 @@
 \newcommand\tto{\mathop{\to}\limits^{\sim}}
 \newcommand\equ{\mathop{\Rightarrow}\limits^{\sim}}
 \newcommand\ev{\mathrm{ev}}
+\newcommand\fct{\mathrm{Fct}}
 
-\nocite{alg-2}\nocite{cat-3}\nocite{cat-4}\nocite{cat-5}\nocite{cat-6-1}\nocite{cat-7}\nocite{cat-8}\nocite{cat-9}\nocite{cat-10}
+\nocite{alg-2}\nocite{cat-3}\nocite{cat-4}\nocite{cat-5}\nocite{cat-6-1}\nocite{cat-7}\nocite{cat-8}\nocite{cat-9}\nocite{cat-10}\nocite{cat-11}\nocite{Tex-1}
 
-\begin{figure}[ht] %The idea of inserting a picture of a cat came from "The Joy of Cat"
+\begin{figure}[ht] %The idea of inserting a picture of a cat came from "The Joy of Cats"
 	\centering
 	\includegraphics{Cat.jpg}	%Please download the file to the same path as this tex
 	\caption*{\bf Cat}
 	\label{Cat}
 \end{figure}
 
-The newest edition of the file and the source code of this note can be downloaded from \url{https://github.com/Fungus-00/Mathematical-Notes/}.
+These are my notes of basic category theory. The category theory which talk about in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice} ($\AC$)), as for \emph{metacategory}, please see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Def:Metacategory - ProofWiki}. The main sources of this text come from \cite[第二章]{alg-1}.
 
-These are my notes of basic category theory. The category theory which talk about in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice}), as for \emph{metacategory}, please see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Definition:Metacategory - ProofWiki}. The main sources of this text come from \cite[第二章]{alg-1}.
+The newest edition of this note (including \texttt{pdf.} file and the source code) can be downloaded from \url{https://github.com/Fungus-00/Mathematical-Notes/}. This note is seriously unfinished, for reference only.
 
 
 \begin{defi}\label{category}
@@ -62,8 +66,8 @@ These are my notes of basic category theory. The category theory which talk abou
 	\begin{itemize}
 		\item A collection $\Ob(\ca)$ of \emph{objects} $X,Y,Z\cdots$
 		\item A collection 
-			$$\Mor(\ca)=\bigsqcup_{X\in\Ob(\ca)}{\mathrm{sou}_\ca(X)}=\bigsqcup_{Y\in\Ob(\ca)}{\mathrm{tar}_\ca(Y)}=\bigsqcup_{X,Y\in\Ob(\ca)}{\Hom_\ca(X,Y)}$$
-			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{sou}_\ca(X)$ is the \emph{domain} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain} of its elements, and \emph{hom-class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
+			$$\Mor(\ca)=\bigsqcup_{X\in\Ob(\ca)}{\mathrm{scr}_\ca(X)}=\bigsqcup_{Y\in\Ob(\ca)}{\mathrm{tar}_\ca(Y)}=\bigsqcup_{X,Y\in\Ob(\ca)}{\Hom_\ca(X,Y)}$$
+			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{scr}_\ca(X)$ is the \emph{domain (source)} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain (target)} of its elements, and \emph{hom-class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
 				\footnote{\label{sign} Strictly speaking, the morphism is composed by a 3-tuple $\left<X,f,Y\right>$, otherwise, it will cause confusion. For instance, in set category $\mathsf{Set}$ (see \hyperref[exm3]{Example 3.1}), if we don't discriminate the same mapping in different homology class, i.e., which have different codomains (such as $f:\{0\}\to\{0\}$ and $g:\{0\}\to\{0,1\}$ which satisfy $f(0)=g(0)=0$), then they are the same morphism, it will contradict the disjoint of homology class. Of course, for convenience, we will omit the 3-tuples when describing morphisms.}
 			For $W,X,Y,Z\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)\wedge g\in\Hom_\ca(Y,Z)$, the binary operation that defines \emph{composite morphism} $g\circ^\ca f$ (which is abbreviated as $g\circ f$) satisfies:
 			\begin{enumerate}
@@ -81,8 +85,8 @@ These are my notes of basic category theory. The category theory which talk abou
 			X\arrow[->,>=stealth,r,"f"] & Y
 		\end{tikzcd}\quad\text{means}\quad f\in\Hom_\ca(X,Y),\quad
 		\begin{tikzcd}
-			X\arrow[->,>=stealth,dd,"f"]\arrow[->,>=stealth,rrdd,"h"] & & \\ & & \\
-			Y\arrow[->,>=stealth,rr,"g"] & & Z
+			X\arrow[->,>=stealth,d,"f"'] \arrow[->,>=stealth,rd,"h"] & \\
+			Y\arrow[->,>=stealth,r,"g"] & Z
 	\end{tikzcd}\quad\text{means}\quad g\circ f=h.\]
 \end{defi}
 
@@ -100,7 +104,7 @@ These are my notes of basic category theory. The category theory which talk abou
 		\item $\ca'$ is a category;
 		\item $\Ob(\ca')\subseteq\Ob(\ca)$;
 		\item $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)\subseteq\Hom_\ca(X,Y)]$;
-		\item $\forall f,g\in\Mor(\ca')[f\circ^{\ca'}g=f\circ^{\ca}g]$ (if $f\circ^{\ca}g$ is defined);
+		\item $\forall f,g\in\Mor(\ca')[f\circ^{\ca'}g=f\circ^{\ca}g]$\quad(if $\dom_\ca(f)=\cod_\ca(g)$);
 		\item for all $X\in\Ob(\ca')$, the identity morphism $\1_X$ in $\ca'$ is also that in $\ca$.
 	\end{itemize}
 	In particular, if $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)=\Hom_\ca(X,Y)]$, then we say 	$\ca'$ is the \emph{full subcategory} of $\ca$.
@@ -108,15 +112,15 @@ These are my notes of basic category theory. The category theory which talk abou
 	A \emph{opposite} category $\ca\op$ of category $\ca$ satisfies:
 	\begin{itemize}
 		\item $\Ob(\ca\op)=\Ob(\ca)$;
-		\item $\forall X,Y\in\Ob(\ca\op)[\Hom_{\ca\op}(X,Y)=\Hom_{\ca}(Y,X)]$, i.e., $[f\in\Hom_\ca(X,Y)\iff f\op\in\Hom_{\ca\op}(X,Y)]$;
-		\item $\forall f,g\in\Mor(\ca)[g\circ\op f=f\circ^\ca g]$;
+		\item $\forall X,Y\in\Ob(\ca\op)[\Hom_{\ca\op}(X,Y)=\Hom_{\ca}(Y,X)]$;
+		\item $\forall f,g\in\Mor(\ca)[g\circ\op f=f\circ^\ca g]$\quad(if $\dom_\ca(f)=\cod_\ca(g)$);
 		\item for all $X\in\Ob(\ca\op)$, the identity morphism $\1_X$ in $\ca\op$ is also that in $\ca$.
 	\end{itemize}
-	It's easy to verify that $\ca$ is also a category, and we have $(\ca\op)\op=\ca$. $\ca\op$ has the symmetric algebraic properties as $\ca$.
+	It's easy to verify that $\ca\op$ is also a category, and we have $(\ca\op)\op=\ca$. $\ca\op$ has the symmetric algebraic properties as $\ca$.
 	
 	A category $\ca$ is called \emph{small} if both $\Ob(\ca)$ and $\Mor(\ca)$ are sets in $\zfc$ but not proper class,
-	 \footnote{``$X$ is a set in $\zfc$'' has two meanings: we can prove $X$ exists in $\zfc$, i.e., $\zfc\vdash_\mathbf{H}\exists X$; or the existence of $X$ in $\zfc$ is consistent with $\zfc$, i.e., $\vdash_\mathbf{H}\mathrm\con(\zfc)\to\con(\zfc+\exists X)$, where $\mathbf{H}$ means the Frege-Hilbert first-order logic axiomatic system. The meaning in the text is the former. Of course, to prove the consistency, we often need to add extra axioms. The provability of $\zfc$ is limited, so we can only define the set in the model $(V_\kappa,\in)$, where $\kappa$ is the least strongly inaccessible cardinal, but that's enough. See \cite{set-1} for more details.}
-	and \emph{large} otherwise. A \emph{locally small} category is a category such that for all objects $X$ and $Y$, $\Hom(X,Y)$ is a set in $\zfc$, called a \emph{homset}.
+	 \footnote{``$X$ is a set in $\zfc$'' has two meanings: we can prove $X$ exists in $\zfc$, i.e., $\zfc\vdash_\mathbf{H}\exists X$; or the existence of $X$ in $\zfc$ is consistent with $\zfc$, i.e., $\vdash_\mathbf{H}\mathrm\con(\zfc)\to\con(\zfc+\exists X)$, where $\mathbf{H}$ means the Frege-Hilbert first-order logic axiomatic system. The meaning in the text is the former. Of course, to prove the consistency, we often need to add extra axioms. The provability of $\zfc$ is limited, so we can only define the set in the model $(V_\kappa,\in)$, where $\kappa$ is the least strongly inaccessible cardinal, but that's enough. See \cite{set-1} or \cite{mod-1} for more details.}
+	and \emph{large} otherwise. A \emph{locally small} category is a category such that for all objects $X$ and $Y$, $\Hom(X,Y)$ is a set in $\zfc$, called \emph{hom-set}.
 \end{defi}
 
 
@@ -138,23 +142,25 @@ These are my notes of basic category theory. The category theory which talk abou
 		\begin{table}[ht]\centering
 		\begin{tabular}{|l|l|l|}
 			\hline
-			\multicolumn{1}{|c|}{\textbf{Symbol}} & \multicolumn{1}{c|}{\textbf{Object}}       & \multicolumn{1}{c|}{\textbf{Morphism}}      \\ \hline
-			$\mathsf{Set}$                        & Set                                        & Mapping                                     \\ \hline
-			$\mathsf{Ord}$                        & Preordered set                             & \multirow{2}{*}{Order-preserving mapping}   \\ \cline{1-2}
-			$\mathsf{On}$                         & \multirow{2}{*}{Ordinal number}            &                                             \\ \cline{1-1} \cline{3-3} 
-			$\mathsf{Com}$                        &                                            & Computable function                         \\ \hline
-			$\mathsf{Mon}$                        & Monoid group                               & \multirow{3}{*}{Group homomorphism}         \\ \cline{1-2}
-			$\mathsf{Grp}$                        & Group                                      &                                             \\ \cline{1-2}
-			$\mathsf{Ab}$                         & Abelian group                              &                                             \\ \hline
-			$\mathsf{Rng}$                        & Ring                                       & Ring homomorphism                           \\ \hline
-			$\mathsf{Top}$                        & Topological space                          & \multirow{2}{*}{Continuous mapping}         \\ \cline{1-2}
-			$\mathsf{Met}$                        & Metric space                               &                                             \\ \hline
-			$_R\mathsf{Mod}$                      & Left module over the ring $R$              & \multirow{2}{*}{$R$-homomorphism}           \\ \cline{1-2}
-			$\mathsf{Mod}_R$                      & Right module over the ring $R$             &                                             \\ \hline
-			$\mathsf{Vect}_\Bbbk$                 & Vector space over the field $\Bbbk$        & \multirow{2}{*}{$\Bbbk$-Linear mapping}     \\ \cline{1-2}
-			$\mathsf{fVect}_\Bbbk$                & Finite vector space over the field $\Bbbk$ &                                             \\ \hline
-			$\mathsf{Man}$                        & Smooth manifolds                           & Smooth mapping                              \\ \hline
-			$\mathsf{Cat}$                        & Small category                             & \hyperref[functor]{Functor}                 \\ \hline
+			\multicolumn{1}{|c|}{\textbf{Symbol}} & \multicolumn{1}{c|}{\textbf{Object}}           & \multicolumn{1}{c|}{\textbf{Morphism}}      \\ \hline
+			$\mathsf{Set}$                        & Set                                            & Mapping                                     \\ \hline
+			$\mathsf{Ord}$                        & Preordered set                                 & \multirow{2}{*}{Order-preserving mapping}   \\ \cline{1-2}
+			$\mathsf{On}$                         & \multirow{2}{*}{Ordinal number}                &                                             \\ \cline{1-1} \cline{3-3} 
+			$\mathsf{Cpt}$                        &                                                & Computable function                         \\ \hline
+			$\mathsf{Mon}$                        & Monoid group                                   & \multirow{3}{*}{Group homomorphism}         \\ \cline{1-2}
+			$\mathsf{Grp}$                        & Group                                          &                                             \\ \cline{1-2}
+			$\mathsf{Ab}$                         & Abelian group                                  &                                             \\ \hline
+			$\mathsf{Rng}$                        & Ring                                           & Ring homomorphism                           \\ \hline
+			$\mathsf{Top}$                        & Topological space                              & \multirow{2}{*}{Continuous mapping}         \\ \cline{1-2}
+			$\mathsf{Met}$                        & Metric space                                   &                                             \\ \hline
+			$_R\mathsf{Mod}$                      & Left module over the ring $R$                  & \multirow{2}{*}{$R$-homomorphism}           \\ \cline{1-2}
+			$\mathsf{Mod}_R$                      & Right module over the ring $R$                 &                                             \\ \hline
+			$\mathsf{Vect}_\Bbbk$                 & Vector space over the field $\Bbbk$            & \multirow{2}{*}{$\Bbbk$-Linear mapping}     \\ \cline{1-2}
+			$\mathsf{fVect}_\Bbbk$                & Finite vector space over the field $\Bbbk$     &                                             \\ \hline
+			$\mathsf{Man}$                        & Smooth manifolds                               & Smooth mapping                              \\ \hline
+			$\mathsf{Com}$                        & Complex                                        & Simplicial mapping                          \\ \hline
+			$\mathsf{Str}_\mathcal{L}$            & Structure given by the language $\mathcal{L}$  & $\mathcal{L}$-Elementary embedding          \\ \hline
+			$\mathsf{Cat}$                        & Small category                                 & \hyperref[functor]{Functor}                 \\ \hline
 		\end{tabular}
 		\end{table}\\	%Making from https://table.6cm.co/
 		Evidently, they are all large and locally small categories. And $\mathsf{On}/\mathsf{Grp}/\mathsf{Ab}/\mathsf{Met}/\mathsf{fVect}_\Bbbk$ is the full subcategory of $\mathsf{Ord}/\mathsf{Mon}/\mathsf{Grp}/\mathsf{Top}/\mathsf{Vect}_\Bbbk$.
@@ -257,7 +263,7 @@ These are my notes of basic category theory. The category theory which talk abou
 \begin{defi}\label{vertical composition}
 	For functors $F,G,H:\ca\to\D$, natural transformations $\theta:F\Rightarrow G$ and $\psi:G\Rightarrow H$, the element of \emph{vertical composition} of the natural transformations is defined as $(\psi\odot\theta)_X=\psi_X\circ\theta_X$. In commutative diagrams forms,
 	
-	\[\begin{tikzcd}
+	\[\begin{tikzcd}	%This code of diagram is a little nontrivial
 			& \arrow[d,Rightarrow,"\theta"] & \\
 			\ca \arrow[rr, "F", bend left=75] \arrow[rr, "H"', bend right=75] \arrow[rr, "G" description] &
 			\textcolor{white}{s} \arrow[d,Rightarrow,"\psi"] &
@@ -363,7 +369,7 @@ These are my notes of basic category theory. The category theory which talk abou
 	For vertical composition, observe the following commutative diagram and natural transformations:
 
 	For
-	\[\begin{tikzcd}
+	\[\begin{tikzcd}	%The diagram is a little askew
 		\ca
 		\arrow[rrr, bend left =80, "F", ""' name=F]
 		\arrow[rrr, bend left =20, "G" description, "" name=G, ""' name=GG] 
@@ -403,7 +409,7 @@ These are my notes of basic category theory. The category theory which talk abou
 	For any nonempty sets $A,B$ and mapping $f:A\to B$, we have
 		\[\exists g:B\to A[g\circ f=\id_A]\iff f\ \text{is a injection}\ \iff\forall C\ne\varnothing\forall h,h':C\to A[f\circ h=f\circ h'\Longrightarrow h=h'],\]
 		\[\exists g:B\to A[f\circ g=\id_B]\Longrightarrow f\ \text{is a surjection}\ \iff\forall C\ne\varnothing\forall h,h':B\to C[h\circ f=h'\circ f\Longrightarrow h=h'],\]
-	and $f$ is a surjection $\Longrightarrow \exists g:B\to A[f\circ g=\id_B]$ can be proved in using the Axiom of Choice.
+	and $f$ is a surjection $\Longrightarrow \exists g:B\to A[f\circ g=\id_B]$ can be proved using $\AC$.
 	It's easy to see that $f$ is a bijection if and only if it has both left and right inversal mappings, and obviously the two inversal mappings are the same one, which is unique.
 \end{lmm}
 
@@ -596,35 +602,9 @@ These are my notes of basic category theory. The category theory which talk abou
 		\begin{itemize}
 			\item Monic but not injective [Example 2.1.2].
 			\item Injective but not \emph{split monic} (a section) [Example 2.2.3, 2.2.4].
-			\item Epic but not surjective [Example 2.3.2],.
+			\item Epic but not surjective [Example 2.3.2].
 			\item Surjective but not \emph{split epic} (a retraction) [Example 2.4.3, 2.4.4].
 		\end{itemize}
-		
-		\item Consider a topological space $(X,\mathcal{T})$, let $I=[0,1]$. We now define: 
-		\begin{itemize}
-			\item $f:I\to X$ is a \emph{path} from $x\in X$ to $y\in X$ if $f$ is a continuous mapping and $f(x)=0$, $f(y)=1$. We denote the collection of the paths in $X$ from $x$ to $y$ as $\mathrm{P}_X(x,y)$.
-			\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, the composition of paths $f*g:I\to X$ is defined as follow:
-				$$f*g(t)=\left\{\begin{aligned}
-					& f(2t)   & 0\leq t\leq\frac{1}{2},\\
-					& g(2t-1) & \frac{1}{2}\leq t\leq1.\\
-				\end{aligned}\right.$$
-				It's easy to see that the $f*g$ is also a path.
-			\item The identity path $\mathrm{Id}_x:=[I\ni t\mapsto x]\in\mathrm{P}(x,x)$. Note that $\mathrm{Id}_x*f=f=f*\mathrm{Id}_x$ is not always true.
-			\item The inverse of path $f$ from $x$ is defined as $f\iv:=[I\ni t\mapsto f(1-t)]$. Note that $f*f\iv=\mathrm{Id}_x=f\iv*f$ is not always true.
-			\item We call that the path $f$ and $g$ from $x$ to $y$ is homotopy, if there exists a continuous mapping $F:I^2\to X$ satisfies for all $s,t\in I$ that
-				$$F(s,0)=f(s)\wedge F(s,1)=g(s)\wedge F(0,t)=x\wedge F(1,t)=y.$$
-			We denote it as ``$f\mathop{\simeq}\limits^\mathrm{P}g$''.
-		\end{itemize}
-		
-		We can verify that the homotopy relation of paths is an equivalence relation (see \cite[定理 10.1.1]{top-1}), then we can construct a category $\Pi_1(X)$ called \emph{fundamental groupoid}:
-		\begin{itemize}
-			\item $\Ob(\Pi_1(X)):=X$.
-			\item $\Hom_{\Pi_1(X)}(x,y):=\mathrm{P}_X(x,y)/\mathop{\simeq}\limits^\mathrm{P}$.
-			\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, we define $[g]\circ^{\Pi_1(X)}[f]:=[g*f]$.
-			\item $\1^{\Pi_1(X)}_x:=[\mathrm{Id}_x]$ for all $x\in X$.
-			\item $[f]\iv:=[f\iv]$ for all $f\in\Mor(\Pi_1(X))$.
-		\end{itemize}
-		We can verify the definition is well. All the details of the content above are shown in \cite[\S10.1]{top-1}. Therefore, $\Pi_1(X)$ is indeed a groupoid. Moreover, note that the \emph {loop} $\mathrm{Aut}(x)=\Hom(x,x)$ is the fundamental group $\pi_1(X,x)$, then we can find that any fundamental groups $\pi_1(X,x)$ are all the \hyperref[skeleton]{skeletons} of $\Pi_1(X)$.
 	\end{enumerate}
 \end{exm}
 
@@ -699,10 +679,39 @@ These are my notes of basic category theory. The category theory which talk abou
 \end{defi}
 
 
+\begin{exm}
+	Consider a topological space $(X,\mathcal{T})$, let $I=[0,1]$. We now define: 
+	\begin{itemize}
+		\item $f:I\to X$ is a \emph{path} from $x\in X$ to $y\in X$ if $f$ is a continuous mapping and $f(x)=0$, $f(y)=1$. We denote the collection of the paths in $X$ from $x$ to $y$ as $\mathrm{P}_X(x,y)$.
+		\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, the composition of paths $f*g:I\to X$ is defined as follow:
+			$$f*g(t)=\left\{\begin{aligned}
+				& f(2t),   & 0\leq t\leq\frac{1}{2},\\
+				& g(2t-1), & \frac{1}{2}\leq t\leq1.\\
+			\end{aligned}\right.$$
+			It's easy to see that the $f*g$ is also a path.
+		\item The identity path $\mathrm{Id}_x:=[I\ni t\mapsto x]\in\mathrm{P}(x,x)$. Note that $\mathrm{Id}_x*f=f=f*\mathrm{Id}_x$ is not always true.
+		\item The inverse of path $f$ from $x$ is defined as $f\iv:=[I\ni t\mapsto f(1-t)]$. Note that $f*f\iv=\mathrm{Id}_x=f\iv*f$ is not always true.
+		\item We call that the path $f$ and $g$ from $x$ to $y$ is homotopy, if there exists a continuous mapping $F:I^2\to X$ satisfies for all $s,t\in I$ that
+			$$F(s,0)=f(s)\wedge F(s,1)=g(s)\wedge F(0,t)=x\wedge F(1,t)=y.$$
+		We denote it as ``$f\mathop{\simeq}\limits^\mathrm{P}g$''.
+	\end{itemize}
+	
+	We can verify that the homotopy relation of paths is an equivalence relation (see \cite[定理 10.1.1]{top-1}), then we can construct a category $\Pi_1(X)$ called \emph{fundamental groupoid}:
+	\begin{itemize}
+		\item $\Ob(\Pi_1(X)):=X$.
+		\item $\Hom_{\Pi_1(X)}(x,y):=\mathrm{P}_X(x,y)/\mathop{\simeq}\limits^\mathrm{P}$.
+		\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, we define $[g]\circ^{\Pi_1(X)}[f]:=[g*f]$.
+		\item $\1^{\Pi_1(X)}_x:=[\mathrm{Id}_x]$ for all $x\in X$.
+		\item $[f]\iv:=[f\iv]$ for all $f\in\Mor(\Pi_1(X))$.
+	\end{itemize}
+	We can verify the definition is well. All the details of the content above are shown in \cite[\S10.1]{top-1}. Therefore, $\Pi_1(X)$ is indeed a groupoid. Moreover, note that the \emph {loop} $\mathrm{Aut}(x)=\Hom(x,x)$ is the fundamental group $\pi_1(X,x)$, then we can immediately find that the fundamental group $\pi_1(X,x)$ is the skeleton of $\Pi_1(X)$ for each $x\in X$. See \cite[Chapter 2]{top-2} for more details.
+\end{exm}
+
+
 \begin{lmm}\label{l4}
 	For category $\ca$, we have:
 	\begin{enumerate}
-		\item Suppose the Axiom of Choice,
+		\item Suppose $\AC$,
 			\footnote{The Axiom of Choice in $\zfc$ provides choice functions based on sets, but not proper classes, so the categories in this proposition refer to the small categories. If you want this proposition to be true in any large categories, you need stronger axiom of choice, which is based on any class. However, it can't be discussed in $\zfc$.}
 			we have every nonempty category has at least one skeleton.
 		\item Every inclusion functor $\iota:\ca'\to\ca$ is an equivalence, where $\ca'$ is a skeleton of $\ca$; and we can find a quasi-inverse called \emph{skeletal functor} $\kappa:\ca\to\ca'$ of $\iota$, which gives the skeleton of $\ca$.
@@ -715,7 +724,7 @@ These are my notes of basic category theory. The category theory which talk abou
 \begin{proof}
 	Assume two categories $\ca$, $\D$ and a functor $F:\ca\to\D$.
 	\begin{enumerate}
-		\item Because the isomorphism relation among objects satisfies reflexivity, symmetry and transitivity, we can divide them into an equivalence (not functor, but a simple relation) class $\ca/\mathop{\simeq}\limits^\mathrm{M}$. Using the Axiom of Choice, we can construct a choice function which selects representative element in each $[X]$ for all $X\in\Ob(\ca)$. By preserving the representative elements and all the morphisms between any two of them, they form a full subcategory $\ca'$ of category $\ca$, and it's easy to see that $\ca'$ is the skeleton of $\ca$.
+		\item Because the isomorphism relation among objects satisfies ref{}lexivity, symmetry and transitivity, we can divide them into an equivalence (not functor, but a simple relation) class $\ca/\mathop{\simeq}\limits^\mathrm{M}$. Using $\AC$, we can construct a choice function which selects representative element in each $[X]$ for all $X\in\Ob(\ca)$. By preserving the representative elements and all the morphisms between any two of them, they form a full subcategory $\ca'$ of category $\ca$, and it's easy to see that $\ca'$ is the skeleton of $\ca$.
 		
 		\item Construct:\begin{itemize}
 			\item $\kappa\upharpoonright_{\Ob(\ca)}$ is the choice function mentioned in Proposition 1.
@@ -800,7 +809,7 @@ These are my notes of basic category theory. The category theory which talk abou
 		\item {\bf $F$ is essentially surjective:} For any $W\in\Ob(\D)$, since $\psi:FG\mathop{\Rightarrow}\limits^{\sim}\id_\D$, we have $\psi_W\in\Hom_\D(FG(W),\id_\D(W))$ is an isomorphism, so $F(G(W))\mathop{\simeq}\limits^\mathrm{M}\id_\D(W)=W$. Hence, $F$ is essentially surjective.
 	\end{itemize}
 	
-	($\Longleftarrow$) (Need the Axiom of Choice) Consider the skeleton $\ca'$ of category $\ca$, the skeleton $\D'$ of category $\D$, inclusion functors $\iota_\ca:\ca'\to\ca$ and $\iota_\D:\D'\to\D$, skeletal functors $\kappa_\ca:\ca\to\ca'$ and $\kappa_\D:\D\to\D'$ (see the proof of \hyperref[l4]{Lemma 4.2} for the the methods of construction). We define $F':=\kappa_\D F\iota_\ca:\ca'\to\D'$.
+	($\Longleftarrow$) (Need $\AC$) Consider the skeleton $\ca'$ of category $\ca$, the skeleton $\D'$ of category $\D$, inclusion functors $\iota_\ca:\ca'\to\ca$ and $\iota_\D:\D'\to\D$, skeletal functors $\kappa_\ca:\ca\to\ca'$ and $\kappa_\D:\D\to\D'$ (see the proof of \hyperref[l4]{Lemma 4.2} for the the methods of construction). We define $F':=\kappa_\D F\iota_\ca:\ca'\to\D'$.
 
 		Through \hyperref[l4]{Lemma 4.2} we know that $\kappa_\ca$ and $\kappa_\D$ are equivalence, so they are faithful, full and essentially surjective (we just proved this). Because $F$ and $\iota_\ca$ are faithful, full and essentially surjective as well, the functor $F'$ between skeletal categories is, too (by \hyperref[func ppt]{Lemma 3.4}). Using \hyperref[l4]{Lemma 4.5} we have $F'$ is a functorial isomorphism. Suppose $G:=\iota_\ca{F'}\iv\kappa_\D:\D\to\ca$, we claim that $G$ is the quasi-inverse of $F$:
 			$$GF = \underbracket{\underline{(\iota_\ca{F'}\iv\kappa_\D) F}\id_\ca \simeq \underline{\iota_\ca{F'}\iv(\kappa_\D F}\iota_\ca)\kappa_\ca}_{\text{since }\id_\ca\simeq\iota_\ca\kappa_\ca} = \iota_\ca {F'}\iv F'\kappa_\ca = \iota_\ca\kappa_\ca\simeq\id_\ca,$$
@@ -811,7 +820,7 @@ These are my notes of basic category theory. The category theory which talk abou
 
 
 \begin{cor}
-	(Without the Axiom of Choice) Two skeletal categories are equivalent if and only if they are isomorphic, therefore two categories are equivalent if and only if they have isomorphic skeletons.
+	(Without $\AC$) Two skeletal categories are equivalent if and only if they are isomorphic, therefore two categories are equivalent if and only if they have isomorphic skeletons.
 \end{cor}
 
 \begin{proof}
@@ -855,6 +864,188 @@ These are my notes of basic category theory. The category theory which talk abou
 	The proof about terminal objects is similar.
 \end{proof}
 
-\bibliography{Reference}
 
+\begin{exm}
+	Here are some the example of initial and terminal objects.
+	\begin{enumerate}
+		\item For any pre-ordered set $(S,\preccurlyeq)$, we can construct a category of it, which the objects are the element in $S$, and
+			$$\Hom_S(x,y):=\left\{\begin{aligned} & \{\left<x,y\right>\}, & x\preccurlyeq y,\\ & \varnothing, & \text{otherwise},\\ \end{aligned}\right.$$ 
+			$$\left<x,y\right>\circ\left<y,z\right>:=\left<x,z\right>.$$
+		\begin{itemize}
+			\item If $(S,\preccurlyeq)$ is a partially ordered set, then the initial and terminal objects (if exist) in it are both unique.
+			\item If $(S,\preccurlyeq)$ is a linearly ordered set, it's easy to see that $x\in S$ is initial if and only if $x=\min(S)$, and $x$ is terminal if and only if $x=\max(S)$.
+			\item (See \cite[\S7]{cat-1}) Consider a f{}liter $(\mathbb{F},\subseteq)$ on $F$ and a ideal $(\mathbb{I},\subseteq)$ on $I$. Evidently, $F$ is the only terminal object in $\mathbb{F}$, and $\varnothing$ is the only initial object of $\mathbb{I}$; a f{}liter/ideal has initial/terminal object if and only if it is principal. What's more, any topology with inclusion relation has both objects, it has a zero object if and only if it's empty.
+		\end{itemize}
+		
+		\item In $\mathsf{Set}$, the initial object is $\varnothing$, the terminal objects are the sets that have exact one element.
+		
+		\item In $\mathsf{Rel}$, $\varnothing$ is the unique initial and unique terminal object.
+		
+		\item In $\mathsf{Grp}$, trivial group ${e}$ is a zero object, the homomorphism which the codomain is a trivial group is a zero morphism.
+		
+		\item In $\mathsf{Vect}_\Bbbk$, the null space is a zero object, and zero mapping is a zero morphism.
+		
+		\item For $X\in\Ob(\ca)$, $\1_X$ the terminal object of slice category $\ca/X$; and is the initial object of coslice category $X/\ca$.
+	\end{enumerate}
+\end{exm}
+
+
+\begin{defi}
+	Consider a category $\ca$ and let $\{X_i\}_{i\in I}\subseteq\Ob(\ca)$ ($I$ is a set) be a family of objects in $\ca$, and an object $P$ in $\ca$.
+	
+	For a family of morphisms $\{p_i\}_{i\in I}$ where $p_i\in\Hom_\ca(P,X_i)$ for each $i\in I$, we say the pair $\left<P,\{p_i\}_{i\in I}\right>$ is the \emph{product} of $\{X_i\}_{i\in I}$, if for all $Y\in\Ob(\ca)$, and a family of morphisms $\{f_i\}_{i\in I}$ where $f_i\in\Hom_\ca(Y,X_i)$ for each $i\in I$, there exists a unique morphism $u\in\Hom_\ca(Y,P)$ such that $\forall i\in I[f_i=p_i\circ u]$.\\
+	In commutative diagram (where $i,j\in I$):
+	\[\begin{tikzcd}
+		& Y \arrow[->,>=stealth, dd, "\exists!u" description, dashed] \arrow[->,>=stealth, rdd, "f_j"] \arrow[->,>=stealth, ldd, "f_i"'] & \\ & & \\
+		X_i & P \arrow[->,>=stealth, l, "p_i"] \arrow[->,>=stealth, r, "p_j"'] & X_j.
+	\end{tikzcd}\]
+	Each $p_i$ is called \emph{projection}.
+	
+	For a family of morphisms $\{q_i\}_{i\in I}$ where $q_i\in\Hom_\ca(X_i,P)$ for each $i\in I$, we say the pair $\left<P,\{q_i\}_{i\in I}\right>$ is the \emph{coproduct} of $\{X_i\}_{i\in I}$, if for all $Y\in\Ob(\ca)$, and a family of morphisms $\{g_i\}_{i\in I}$ where $g_i\in\Hom_\ca(X_i,Y)$ for each $i\in I$, there exists a unique morphism $u\in\Hom_\ca(P,Y)$ such that $\forall i\in I[g_i=u\circ q_i]$.\\
+	In commutative diagram (where $i,j\in I$):
+	\[\begin{tikzcd}
+		X_i \arrow[->,>=stealth, r, "q_i"] \arrow[->,>=stealth, rdd, "g_i"'] & P \arrow[->,>=stealth, dd, "\exists!u" description, dashed] &
+		X_j \arrow[->,>=stealth, l, "q_j"'] \arrow[->,>=stealth, ldd, "g_j"] \\ & & \\ & Y.&
+	\end{tikzcd}\]
+	Each $q_i$ is called \emph{coprojection}.
+\end{defi}
+
+
+\begin{lmm}\label{id recognize}
+	In category $\ca$, let $\left<P,\{p_i\}_{i\in I}\right>$ be the product of $\{X_i\}_{i\in I}$ and $k\in\Hom_\ca(P,P)$ satisfies $\forall i\in I[p_i\circ k=p_i]$, then $k=\1_P$. Similarly, if $\left<P,\{q_i\}_{i\in I}\right>$ is the coproduct and $\forall i\in I[k\circ q_i=q_i]$, then $k=\1_P$.
+\end{lmm}
+
+\begin{proof}
+	 According to the definition of product, for $P$ and $\{p_i\}_{i\in I}$ themselves, we have the following diagram:
+	\[\begin{tikzcd}
+		P \arrow[->,>=stealth, rd, "p_i"] \arrow[->,>=stealth, d, "\exists!u"', dashed] & \\
+		P \arrow[->,>=stealth, r, "p_i"'] & X_i.
+		\end{tikzcd}\]
+	Because $\forall i\in I[p_i\circ k=p_i=p_i\circ\1_P]$ and the morphism $u$ is unique, we have $k=u=\1_P$.
+	
+	The proof about coproduct is similar.
+\end{proof}
+
+
+\begin{thm}
+	Consider a category $\ca$ and its objects $P,Q$. If $\left<P,\{p_i\}_{i\in I}\right>$ and $\left<Q,\{q_i\}_{i\in I}\right>$ are both the products/coproducts of the fixed family of objects $\{X_i\}_{i\in I}$, then $P\mathop{\simeq}\limits^\mathrm{M}Q$.
+\end{thm}
+
+\begin{proof}
+	According to the definition of product, for any $i\in I$ we have the following diagram:		\[\begin{tikzcd}
+		& & P \arrow[->,>=stealth, d, "\exists!u", dashed] \arrow[->,>=stealth, lld, "p_i"']\\
+		X_i & & Q \arrow[->,>=stealth, d, "\exists!v", dashed] \arrow[->,>=stealth, ll, "q_i" description]\\
+		& & P. \arrow[->,>=stealth, llu, "p_i"]
+	\end{tikzcd}\]
+	That is $p_i=q_i\circ u$ and $q_i=p_i\circ v$, substituting each other leads to
+			$$\forall i\in I[p_i=p_i\circ v\circ u\wedge q_i=q_i\circ u\circ v].$$
+	Using Proposition 1, we get $v\circ u=\1_P$ and $u\circ v=\1_Q$, thus $u$ and $v$ are the isomorphisms between $P$ and $Q$.
+	
+	The proof about coproduct is similar, just observe the following diagram:
+	\[\begin{tikzcd}
+		P \arrow[->,>=stealth, d, "\exists!u"', dashed] & & \\		
+		Q \arrow[->,>=stealth, d, "\exists!v"', dashed] & &
+		X_i. \arrow[->,>=stealth, llu, "p_i"'] \arrow[->,>=stealth, ll, "q_i" description] \arrow[->,>=stealth, lld, "p_i"] \\ P & &
+	\end{tikzcd}\]
+\end{proof}
+
+
+\begin{defi}
+	For a family of small categories $\{\ca_i\}_{i\in I}$, we define:
+	
+	\emph{Product category} $\prod_{i\in I}{\ca_i}$ (using Cartesian product):
+	\begin{align*}
+		\Ob(\prod_{i\in I}{\ca_i})							&:= \prod_{i\in I}{\Ob(\ca_i)};\\
+		\Hom_{\prod_{i\in I}{\ca_i}}(\{X_i\}_I,\{Y_i\}_I)	&:= \prod_{i\in I}{\Hom(X_i,Y_i)};\\
+		\{f_i\}_I\circ^{\prod}\{g_i\}_I						&:= \{f_i\circ^{\ca_i}g_i\}_I;\\
+		\1^{\prod}_{\{X_i\}_I}			&:= \{1_{X_i}\}_I;
+	\end{align*}
+	where $\{X_i\}_I,\{Y_i\}_I\in\Ob(\prod_{i\in I}{\ca_i})$ and $\{f_i\}_I,\{g_i\}_I\in\Mor(\prod_{i\in I}{\ca_i})$.
+	
+	If $\{\Ob(\ca_i)\}_{i\in I}$ is disjoint, we define the the \emph{coproduct category} $\coprod_{i\in I}{\ca_i}$ of $\{\ca_i\}_{i\in I}$ as follow:
+	\begin{align*}
+		\Ob(\coprod_{i\in I}{\ca_i})			&:= \bigsqcup_{i\in I}{\Ob(\ca_i)};\\
+		\Hom_{\coprod_{i\in I}{\ca_i}}(X_j,Y_k)	&:= \left\{\begin{aligned} & \Hom_{\ca_j}(X_j,Y_k), & j=k, \\ & \varnothing, & j\ne k, \end{aligned}\right.
+	\end{align*}
+	where $i,j\in I$, and $X_j\in\Ob(\ca_j)$, $Y_k\in\Ob(\ca_k)$; the composition of morphisms is defined as the composition in each $\ca_i$.
+	
+	It's easy to verify that the product/coproduct category is indeed a category. We can define the \emph{projection functor} $\mathbf{p}_j:\prod_{i\in I}{\ca_i}\to\ca_j$ for each $j\in I$ such that $\mathbf{p}_j(\{X_i\}_{i\in I})=X_j$ and $\mathbf{p}_j(\{f_i\}_{i\in I})=f_j$, and the definition of inclusion functor $\iota_j:\ca_j\to\coprod_{i\in I}{\ca_i}$ is obvious. Moreover, we denote $\prod\{\ca_1,\ca_2\}$ as $\ca_1\times \ca_2$.
+\end{defi}
+
+
+\begin{cor}
+	In $\mathsf{Cat}$, for a collection of small category $\{\ca_i\}_{i\in I}$, the product category with a collection of projection functor $\left<\prod_{i\in I}{\ca_i},\{\mathbf{p}_i\}_{i\in I}\right>$ is a product of $\{\ca_i\}_{i\in I}$, and the coproduct category with a collection of inclusion functor $\left<\coprod_{i\in I}{\ca_i},\{\iota_i\}_{i\in I}\right>$ is a coproduct of $\{\ca_i\}_{i\in I}$.
+\end{cor}
+
+
+\begin{defi}
+	For small categories $\ca$ and $\D$, we now define \emph{functor category} $\fct(\ca,\D)$: The objects are the functors $F:\ca\to\D$, the morphisms between $F$ and $G$ are the natural transformations $\theta:F\Rightarrow G$, the composition of morphisms is the vertical composition of natural transformations.
+		\footnote{Note that the functor category $\fct(\ca,\D)$ is also a small category. Because evidently $\Ob(\fct(\ca,\D))$ is a set, and for any functors $F,G:\ca\to\D$, the family of the natural transformations between $F$ and $G$ is the subset of the set $\prod_{X\in\ca}{\Hom_\D(F(X),G(X))}$.}
+\end{defi}
+
+
+\begin{defi}
+	Observe the following commutative diagram in category $\ca$:
+	\[\begin{tikzcd}
+		& & & X_1 \arrow[->,>=stealth,rd, "b_1"] \arrow[->,>=stealth,rrrd, "q_1", bend left=13] & & & \\
+		P \arrow[->,>=stealth,rrru, "p_1", bend left=13] \arrow[->,>=stealth,rrrd, "p_2"', bend right=13] \arrow[->,>=stealth,rr, "\exists!u" description, dashed] & &
+		A \arrow[->,>=stealth,ru, "a_1"] \arrow[->,>=stealth,rd, "a_2"'] & & B \arrow[->,>=stealth,rr, "\exists!v" description, dashed] & & Q \\ & & &
+		X_2 \arrow[->,>=stealth,ru, "b_2"'] \arrow[->,>=stealth,rrru, "q_2"', bend right=13] & & &
+	\end{tikzcd}\]
+	
+	We say the pair $\left<A,a_1,a_2\right>$ is the \emph{pullback} of $b_1$ and $b_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies:
+		$$\forall P\in\Ob(\ca)\forall p_1\in\Hom_\ca(P,X_1)\forall p_2\in\Hom(P,X_2)\exists!u\in\Hom(P,A)[a_1\circ u=p_1\wedge a_2\circ u=p_2].$$
+	
+	We say the pair $\left<B,b_1,b_2\right>$ is the \emph{pushout} of $a_1$ and $a_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies
+		$$\forall Q\in\Ob(\ca)\forall q_1\in\Hom_\ca(X_1,Q)\forall q_2\in\Hom(X_2,Q)\exists!v\in\Hom(B,Q)[v\circ b_1=q_1\wedge v\circ b_2=q_2].$$
+\end{defi}
+
+\begin{defi}
+	For category $\ca$ and its object $A$, we now define \emph{hom-functor} as follow:
+	
+	\emph{Covariant hom-functor} $\mathsf{Hom}_\ca(A,-):\ca\to\mathsf{Set}$ satisfies
+	\begin{align*}
+		\mathsf{Hom}_\ca(A,X) &:= \Hom_\ca(A,X),\\
+		\mathsf{Hom}_\ca(A,f) &:= [\Hom_\ca(A,\dom(f))\ni g\mapsto f\circ g].
+	\end{align*}
+	
+	\emph{Contravariant hom-functor} $\mathsf{Hom}_\ca(-,A):\ca\to\mathsf{Set}$ satisfies
+	\begin{align*}
+		\mathsf{Hom}_\ca(X,A) &:= \Hom_\ca(X,A),\\
+		\mathsf{Hom}_\ca(f,A) &:= [\Hom_\ca(\cod(f),A)\ni g\mapsto g\circ f].
+	\end{align*}
+	
+	We immediately get $\mathsf{Hom}_{\ca\op}(A,-)=\mathsf{Hom}_\ca(-,A)$.
+\end{defi}
+
+
+\begin{thm}[Yoneda Lemma]
+	Consider a category $\ca$ , we define:
+		$$\ca^\wedge:=\fct(\ca,\mathsf{Set}),\quad\ca^\vee:=\fct(\ca\op,\mathsf{Set}),$$
+	and \emph{Yoneda embeddings}:
+		$$h_\ca:\ca\to\ca^\wedge,\quad h_\ca(X):=\mathsf{Hom}_\ca(X,-);$$
+		$$k_\ca:\ca\to\ca^\vee  ,\quad k_\ca(X):=\mathsf{Hom}_\ca(-,X).$$
+	
+	We now claim that:\\
+	For all $S\in\Ob(\ca)$ and $F\in\ca^\wedge$, the mapping
+	\begin{align*}
+		\Theta:\Hom_{\ca^\wedge}(h_\ca(S),F) &\to F(S)
+		\phi\mapsto u_S:=\phi_S(\1_S)
+	\end{align*}
+	is a bijection.\\
+	$\ca^\vee$ and $k_\ca$ have the similar property.
+\end{thm}
+
+\begin{proof}
+	For any $T\in\Ob(\ca)$ and $f\in\Hom_ca(S,T)$, we have
+	\[\begin{tikzcd}
+		{\Hom_\ca(S,S)} \arrow[rrr, "{\mathsf{Hom}_\ca(A,f)}"'] \arrow[ddd, "\phi_S"] & & & {\Hom_\ca(S,T)} \arrow[ddd, "\phi_T"']\\ &
+		\1_A \arrow[r, maps to] \arrow[d, maps to] & f \arrow[d, maps to] & \\ &
+		u \arrow[r, maps to] & \big(F(f)\big)(u_S)=\phi_X(f) & \\
+		F(S) \arrow[rrr, "F(f)"] & & & F(T),
+	\end{tikzcd}\]
+	thus $\big(F(f)\big)(u_S)=\phi_X(f)$. It's obvious to see that $\Theta$ is a bijection.
+\end{proof}
+
+\bibliography{Reference}
 \end{document}
