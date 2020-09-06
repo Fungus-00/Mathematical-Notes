@@ -985,6 +985,27 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{defi}
+	For functor $F:\ca\to\D$ and objects $U\in\Ob(\ca)$, $A\in\Ob(\D)$, we define:
+	
+	For morphism $u\in\Hom_\D(A,F(U))$, we say the pair $\left<U,u\right>$ is the \emph{universal morphism from $A$ to $F$} if it satisfies the \emph{universal property}:
+		$$\forall X\in\Ob(\ca)\forall f\in\Hom_\D(A,F(X))\exists!g\in\Hom_\ca(U,X)[F(g)\circ u=f],$$
+	i.e., the diagram (a) commutes.
+	
+	For morphism $u\in\Hom_\D(F(U),A)$, we say the pair $\left<u,U\right>$ is the \emph{universal morphism from $F$ to $A$} if it satisfies the universal property:
+		$$\forall X\in\Ob(\ca)\forall f\in\Hom_\D(F(X),A)\exists!g\in\Hom_\ca(X,U)[u\circ F(g)=f],$$
+	i.e., the diagram (b) commutes.
+	
+	\[\text{(a)}\quad\begin{tikzcd}
+			A \arrow[->,>=stealth, d, "u"'] \arrow[->,>=stealth, rd, "f"] & \\
+			F(U) \arrow[->,>=stealth, r, "F(g)"', dashed] & F(X)
+		\end{tikzcd}\quad\text{(b)}\quad\begin{tikzcd}
+			A & F(U) \arrow[->,>=stealth, l, "u"'] \\
+			& F(X) \arrow[->,>=stealth, lu, "f"] \arrow[->,>=stealth, u, "F(g)"', dashed]
+	\end{tikzcd}\]
+\end{defi}
+
+
+\begin{defi}
 	Observe the following commutative diagram in category $\ca$:
 	\[\begin{tikzcd}
 		& & & X_1 \arrow[->,>=stealth,rd, "b_1"] \arrow[->,>=stealth,rrrd, "q_1", bend left=13] & & & \\
@@ -993,15 +1014,15 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 		X_2 \arrow[->,>=stealth,ru, "b_2"'] \arrow[->,>=stealth,rrru, "q_2"', bend right=13] & & &
 	\end{tikzcd}\]
 	
-	We say the pair $\left<A,a_1,a_2\right>$ is the \emph{pullback} of $b_1$ and $b_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies:
+	We say the pair $\left<A,a_1,a_2\right>$ is the \emph{pullback} of $b_1$ and $b_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies the following universal property:
 		$$\forall P\in\Ob(\ca)\forall p_1\in\Hom_\ca(P,X_1)\forall p_2\in\Hom(P,X_2)\exists!u\in\Hom(P,A)[a_1\circ u=p_1\wedge a_2\circ u=p_2].$$
 	
-	We say the pair $\left<B,b_1,b_2\right>$ is the \emph{pushout} of $a_1$ and $a_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies
+	We say the pair $\left<B,b_1,b_2\right>$ is the \emph{pushout} of $a_1$ and $a_2$, if $b_1\circ a_1=b_2\circ a_2$ and satisfies the following universal property:
 		$$\forall Q\in\Ob(\ca)\forall q_1\in\Hom_\ca(X_1,Q)\forall q_2\in\Hom(X_2,Q)\exists!v\in\Hom(B,Q)[v\circ b_1=q_1\wedge v\circ b_2=q_2].$$
 \end{defi}
 
 \begin{defi}
-	For category $\ca$ and its object $A$, we now define \emph{hom-functor} as follow:
+	For a locally small category $\ca$ and its object $A$, we now define \emph{hom-functor} as follow:
 	
 	\emph{Covariant hom-functor} $\mathsf{Hom}_\ca(A,-):\ca\to\mathsf{Set}$ satisfies
 	\begin{align*}
@@ -1020,7 +1041,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{thm}[Yoneda Lemma]
-	Consider a category $\ca$ , we define:
+	Consider a locally small category $\ca$ , we define:
 		$$\ca^\wedge:=\fct(\ca,\mathsf{Set}),\quad\ca^\vee:=\fct(\ca\op,\mathsf{Set}),$$
 	and \emph{Yoneda embeddings}:
 		$$h_\ca:\ca\to\ca^\wedge,\quad h_\ca(X):=\mathsf{Hom}_\ca(X,-);$$
@@ -1029,23 +1050,55 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 	We now claim that:\\
 	For all $S\in\Ob(\ca)$ and $F\in\ca^\wedge$, the mapping
 	\begin{align*}
-		\Theta:\Hom_{\ca^\wedge}(h_\ca(S),F) &\to F(S)
-		\phi\mapsto u_S:=\phi_S(\1_S)
+		\Theta:\Hom_{\ca^\wedge}(h_\ca(S),F) & \to F(S)\\
+		\Big[\phi:\mathsf{Hom}_\ca(S,-)\Rightarrow F\Big] & \mapsto u_S:=\phi_S(\1_S)
 	\end{align*}
 	is a bijection.\\
-	$\ca^\vee$ and $k_\ca$ have the similar property.
+	$\ca^\vee$ with $k_\ca$ have the similar property.
 \end{thm}
 
 \begin{proof}
-	For any $T\in\Ob(\ca)$ and $f\in\Hom_ca(S,T)$, we have
+	The mapping is well-defined, that's because $\phi_S\in\Hom_\mathsf{Set}(\Hom_\ca(S,S),F(S))$ and $\1_S\in \Hom_\ca(S,S)$.\\
+	
+	\textbf{Injective}: For any $T\in\Ob(\ca)$ and $f\in\Hom_\ca(S,T)$, we have
 	\[\begin{tikzcd}
-		{\Hom_\ca(S,S)} \arrow[rrr, "{\mathsf{Hom}_\ca(A,f)}"'] \arrow[ddd, "\phi_S"] & & & {\Hom_\ca(S,T)} \arrow[ddd, "\phi_T"']\\ &
-		\1_A \arrow[r, maps to] \arrow[d, maps to] & f \arrow[d, maps to] & \\ &
-		u \arrow[r, maps to] & \big(F(f)\big)(u_S)=\phi_X(f) & \\
-		F(S) \arrow[rrr, "F(f)"] & & & F(T),
+		{\Hom_\ca(S,S)} \arrow[->,>=stealth, rrr, "{\mathsf{Hom}_\ca(A,f)}"'] \arrow[->,>=stealth, ddd, "\phi_S"] & & & {\Hom_\ca(S,T)} \arrow[->,>=stealth, ddd, "\phi_T"']\\ &
+		\1_A \arrow[->,>=stealth, r, maps to] \arrow[->,>=stealth, d, maps to] & f \arrow[->,>=stealth, d, maps to] & \\ &
+		u_S \arrow[->,>=stealth, r, maps to] & \big(F(f)\big)(u_S)=\phi_T(f) & \\
+		F(S) \arrow[->,>=stealth, rrr, "F(f)"] & & & F(T),
 	\end{tikzcd}\]
-	thus $\big(F(f)\big)(u_S)=\phi_X(f)$. It's obvious to see that $\Theta$ is a bijection.
+	thus $\big(F(f)\big)(u_S)=\phi_T(f)$. We now prove that $\Theta$ is injective by proving $\phi\ne\psi\Longrightarrow\Theta(\phi)\ne\Theta(\psi)$:\\
+	Suppose $\phi,\psi:\mathsf{Hom}_\ca(S,-)\Rightarrow F$ and $\phi\ne\psi$, so there must exists an $X\in\Ob(\ca)$ that $\phi_X\ne\psi_X$, note that they are mappings, so there exists $f\in\Hom_\ca(S,X)$ such that $\phi_X(f)\ne\psi_X(f)$. Thus $\big(F(f)\big)(\phi_S(\1_S))\ne\big(F(f)\big)(\psi_S(\1_S))$, then we have $\phi_S(\1_S)\ne\phi_S(\1_S)$.
+	
+	\textbf{Surjective}: For any $x\in F(S)$, we now construct a natural transformation (we'll verify it later):
+	\begin{align*}
+		\hat x:\mathsf{Hom}_\ca(S,-) & \Rightarrow F,\\
+		\hat x_T:\Hom_\ca(S,T) & \to F(T),\\
+		f & \mapsto\underbracket{\big(F(f)\big)}_{\in\Hom_\mathsf{Set}(S,T)}(x).
+	\end{align*}
+	We now verify the naturalness: For any $A,B\in\Ob(\ca)$ and $f\in\Hom_\ca(A,B)$ observe the following diagrams:
+	\[\begin{tikzcd}
+		{\Hom_\ca(X,A)} \arrow[->,>=stealth, rrr, "\hat x_A"'] \arrow[->,>=stealth, ddd, "{\mathsf{Hom}_\ca(X,f)}"] & & & F(A) \arrow[->,>=stealth, ddd, "F(g)"']\\
+		& g \arrow[->,>=stealth, r, maps to] \arrow[->,>=stealth, d, maps to] & \big(F(g)\big)(x) \arrow[->,>=stealth, d, maps to] & \\
+		& f\circ g \arrow[->,>=stealth, r, maps to] & \big(F(f)\circ F(g)\big)(x)=\big(F(f\circ g)\big)(x) & \\
+		{\Hom_\ca(X,B)} \arrow[->,>=stealth, rrr, "\hat x_B"] & & & F(B).
+	\end{tikzcd}\]
+	Obviously the inside diagram always commutes for any $g\in\Hom_\ca(S,A)$, because of the property of mapping, we have the outside diagram commutes.\\
+	On the other hand, $\hat x_S(\1_S)=\1_{F(S)}(x)=x$. In summary, for any $x\in F(S)$ there always exists a natural transformation $\phi:\mathsf{Hom}_\ca(S,-)\Rightarrow F$ that $u_S=x$, thus $\Theta$ is surjective.
+	
+	The proof about $\ca^\vee$ with $k_\ca$ is similar.
 \end{proof}
 
+
+\begin{defi}
+		For a locally small category $\ca$ and a functor $F:\ca\to\mathsf{Set}$, consider a object $X\in\Ob(\ca)$ and a natural isomorphism $\phi:\mathsf{Hom}_\ca(X,-)\equ F$ or $\psi:\mathsf{Hom}_\ca(-,X)\equ F$, we call the pair $\left<X,\phi\right>$ is the \emph{representation} of $F$. If there exists a representation of $F$, then we say $F$ is a \emph{representable functor}.
+\end{defi}
+
+
+\begin{exm}
+	We define a \emph{power set functor} $P:\mathsf{Set}\op\to\mathsf{Set}$ such that $P(A):=\mathscr{P}(A)$ and $P(f):=[B\supseteq X\mapsto f\iv[X]]$ where $f:A\to B$. The power set functor is a representable functor, because $\mathscr{P}(X)\approx2^X:=\{f\,|\,f:X\to\{0,1\}\}$ (where ``$\approx$'' means there exists a bijection between two set), we can easily define natural isomorphism $\phi:P\equ\mathsf{Hom_{Set}}(-,2)$ such that $\phi_X(f)=f\iv(\{1\})$, using Yoneda Lemma we know $\left<2,\phi\right>$ is a representation of $P$.
+\end{exm}
+
+\newpage
 \bibliography{Reference}
 \end{document}
