@@ -1,14 +1,14 @@
 %Please compile this tex in "pdfLaTeX", and check the package before you compile it!
-%This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib" and the file of a picture named "Cat.jpg" is in there, and please read the file "README.md" in that website before you complie this tex with reference.
-%The code was written with reference to https://github.com/wenweili/AlJabr-1/blob/master/chapter2.tex, and most of commutative diagrams are making from https://tikzcd.yichuanshen.de/.
+%This tex file is released in https://github.com/Fungus-00/Mathematical-Notes. The reference of this text named "Reference.bib", and the file of a picture named "Cat.jpg" is in there; please read the file "README.md" in that website before you complie this tex with reference.
+%The code was written with reference to https://github.com/wenweili/AlJabr-1/blob/master/chapter2.tex, and most of commutative diagrams are made in https://tikzcd.yichuanshen.de/.
 %The note including code is 100% finished by myself.
 %It's too hard to draw the commutative diagrams QAQ
 
 \documentclass{article}
 \usepackage[scheme=plain]{ctex}	%For Chinese
 \usepackage[dvipsnames]{xcolor}	%For some special colors
-\usepackage[utf8]{inputenc}	\usepackage[T2A]{fontenc}	%For Russian (in reference)
-\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools,multirow,graphicx,caption} %"tikz-cd" for commutative diagram, "enumerate" for enumerate environment, "mathtools" for underbracket, "multirow" for table, "graphicx" "caption" for picture
+\usepackage[utf8]{inputenc}	\usepackage[T2A]{fontenc}	%For Russian (in Reference)
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,tikz-cd,geometry,hyperref,enumerate,mathtools,multirow,graphicx,caption} %"tikz-cd" for commutative diagram, "enumerate" for enumerate environment, "mathtools" for underbracket, "multirow" for table, "graphicx" and "caption" for picture
 	\geometry{a4paper,left=1.25cm,right=1.25cm,top=1.0cm,bottom=1.20cm}
 	\setlength{\footskip}{18pt}	%For the height of the pagination
 	\title{A Brief Introduction of Basic Category Theory}	%基础范畴论简述
@@ -56,20 +56,20 @@
 	\label{Cat}
 \end{figure}
 
-These are my notes of basic category theory. The category theory which talk about in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice} ($\AC$)), as for \emph{metacategory}, please see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Def:Metacategory - ProofWiki}. The main sources of this text come from \cite[第二章]{alg-1}.
+This paper is the notes of basic category theory. The category theory about which talk in this text is based on \emph{Frege-Hilbert first-order logic axiomatic system} and \emph{$\mathsf{ZF}$ axiomatic set theory} (sometimes including \emph{the Axiom of Choice} ($\AC$)); as for \emph{metacategory}, see \href{https://proofwiki.org/wiki/Definition:Metacategory}{Def:Metacategory - ProofWiki}. The main sources of this text content is \cite[第二章]{alg-1}.
 
 The newest edition of this note (including \texttt{pdf.} file and the source code) can be downloaded from \url{https://github.com/Fungus-00/Mathematical-Notes/}. This note is seriously unfinished, for reference only.
 
 
 \begin{defi}\label{category}
-	A \emph{category} $\ca$ consists of:
+	A \emph{category} $\ca$ consists of the following data:
 	\begin{itemize}
 		\item A collection $\Ob(\ca)$ of \emph{objects} $X,Y,Z\cdots$
 		\item A collection 
 			$$\Mor(\ca)=\bigsqcup_{X\in\Ob(\ca)}{\mathrm{scr}_\ca(X)}=\bigsqcup_{Y\in\Ob(\ca)}{\mathrm{tar}_\ca(Y)}=\bigsqcup_{X,Y\in\Ob(\ca)}{\Hom_\ca(X,Y)}$$
-			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{scr}_\ca(X)$ is the \emph{domain (source)} of its elements as well as $\mathrm{tar}_\ca(Y)$ is the \emph{codomain (target)} of its elements, and \emph{hom-class} $\Hom_\ca(X,Y)$ is the intersection of both. What's more, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
+			of \emph{morphisms} $f,g,h\cdots$ with a binary operation ``$\circ$'' which is defined on the subclass of $\Mor(\ca)\times\Mor(\ca)$, where $\mathrm{scr}_\ca(X)$ is called the \emph{domain (source)} of its elements as well as $\mathrm{tar}_\ca(Y)$ is called the \emph{codomain (target)} of its elements, and \emph{hom-class} $\Hom_\ca(X,Y)$ is the intersection of both. Beyond the above definition, we define $\dom_\ca(f)=X$ and $\cod_\ca(f)=Y$ if $f\in\Hom_\ca(X,Y)$.
 				\footnote{\label{sign} Strictly speaking, the morphism is composed by a 3-tuple $\left<X,f,Y\right>$, otherwise, it will cause confusion. For instance, in set category $\mathsf{Set}$ (see \hyperref[exm3]{Example 3.1}), if we don't discriminate the same mapping in different homology class, i.e., which have different codomains (such as $f:\{0\}\to\{0\}$ and $g:\{0\}\to\{0,1\}$ which satisfy $f(0)=g(0)=0$), then they are the same morphism, it will contradict the disjoint of homology class. Of course, for convenience, we will omit the 3-tuples when describing morphisms.}
-			For $W,X,Y,Z\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)\wedge g\in\Hom_\ca(Y,Z)$, the binary operation that defines \emph{composite morphism} $g\circ^\ca f$ (which is abbreviated as $g\circ f$) satisfies:
+			For $W,X,Y,Z\in\Ob(\ca)$ and $f\in\Hom_\ca(X,Y)\wedge g\in\Hom_\ca(Y,Z)$, the binary operation that defines \emph{composite morphism} $g\circ^\ca f$ (which is abbreviated as $g\circ f$) satisfies
 			\begin{enumerate}
 				\item $g\circ f\in\Hom_\ca(X,Z)$;
 				\item $\forall h\in\Hom_\ca(Z,W)[h\circ(g\circ f)=(h\circ g)\circ f]$;
@@ -92,14 +92,14 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{Mark}
-	(Read the \hyperref[sign]{annotation} of this page first) Sometimes we have to define a mapping that is also a morphis, for instance, for sets $Y$ and $Z\subseteq X$, and a mapping $f:X\to Y$, we define a new mapping $g:=\{\left<x,f(x)\right>|x\in Z\}$, strictly speaking, we have defined a 3-tuple $\left<Z,g,Y\right>$ if the mapping is also a morphism, we now abbreviate it as ``$[Z\ni x\mapsto f(x)]$''. What's more, we will abbreviate the restriction $\{\left<x,f(x)\right>|\,x\in Z\}$ as ``$f\upharpoonright_Z$''.
+	(Read the \hyperref[sign]{annotation} of this page first) Sometimes we have to define a mapping that is also a morphism, for instance, for sets $Y$ and $Z\subseteq X$, and a mapping $f:X\to Y$, we define a new mapping $g:=\{\left<x,f(x)\right>|x\in Z\}$, strictly speaking, we have defined a 3-tuple $\left<Z,g,Y\right>$ if the mapping is also a morphism, we now abbreviate it as ``$[Z\ni x\mapsto f(x)]$''. What's more, we will abbreviate the restriction $\{\left<x,f(x)\right>|\,x\in Z\}$ as ``$f\upharpoonright_Z$''.
 
 	Notice that the meanings of the above two markers are different, a classical example is, for a morphism $\beta$ and collection $M$ of some morphisms, $[M\ni\alpha\mapsto\alpha\circ\beta]$ means a new mapping (even morphism) created, but restriction $f\upharpoonright_Z$ is only a reduction of the original mapping.
 \end{Mark}
 
 
 \begin{defi}\label{subcategory, opposite category, small category}
-	$\ca'$ is a \emph{subcategory} of category $\ca$ if:
+	$\ca'$ is a \emph{subcategory} of category $\ca$ if
 	\begin{itemize}
 		\item $\ca'$ is a category;
 		\item $\Ob(\ca')\subseteq\Ob(\ca)$;
@@ -107,9 +107,9 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 		\item $\forall f,g\in\Mor(\ca')[f\circ^{\ca'}g=f\circ^{\ca}g]$\quad(if $\dom_\ca(f)=\cod_\ca(g)$);
 		\item for all $X\in\Ob(\ca')$, the identity morphism $\1_X$ in $\ca'$ is also that in $\ca$.
 	\end{itemize}
-	In particular, if $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)=\Hom_\ca(X,Y)]$, then we say 	$\ca'$ is the \emph{full subcategory} of $\ca$.
+	In particular, if $\forall X,Y\in\Ob(\ca')[\Hom_{\ca'}(X,Y)=\Hom_\ca(X,Y)]$, then we say 	$\ca'$ is a \emph{full subcategory} of $\ca$.
 	
-	A \emph{opposite} category $\ca\op$ of category $\ca$ satisfies:
+	The \emph{opposite} category $\ca\op$ of category $\ca$ satisfies
 	\begin{itemize}
 		\item $\Ob(\ca\op)=\Ob(\ca)$;
 		\item $\forall X,Y\in\Ob(\ca\op)[\Hom_{\ca\op}(X,Y)=\Hom_{\ca}(Y,X)]$;
@@ -127,7 +127,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 \begin{exm}
 	Here are some examples of category.
 	\begin{enumerate}
-		\item Consider a category $\mathsf{Rel}$ in $\mathsf{ZF}$:
+		\item Consider a category $\mathsf{Rel}$ in $\mathsf{ZF}$.
 		\begin{itemize}
 			\item Objects are all sets.
 			\item Homomorphism between any sets $X,Y$ is the power set of binary relations $\mathscr{P}(X\times Y)$.
@@ -162,10 +162,10 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 			$\mathsf{Str}_\mathcal{L}$            & Structure given by the language $\mathcal{L}$  & $\mathcal{L}$-Elementary embedding          \\ \hline
 			$\mathsf{Cat}$                        & Small category                                 & \hyperref[functor]{Functor}                 \\ \hline
 		\end{tabular}
-		\end{table}\\	%Making from https://table.6cm.co/
+		\end{table}\\	 %Making in https://table.6cm.co/
 		Evidently, they are all large and locally small categories. And $\mathsf{On}/\mathsf{Grp}/\mathsf{Ab}/\mathsf{Met}/\mathsf{fVect}_\Bbbk$ is the full subcategory of $\mathsf{Ord}/\mathsf{Mon}/\mathsf{Grp}/\mathsf{Top}/\mathsf{Vect}_\Bbbk$.
 		
-		\item Consider a category $\ca$ and its object $I$, the \emph{slice} category $\ca/I$ satisfies:
+		\item Consider a category $\ca$ and its object $I$, the \emph{slice} category $\ca/I$ satisfies
 		\begin{itemize}
 			\item Objects are all the morphisms $f\in\Mor(\ca)$ which satisfy $f\in\Hom_\ca(X,I)$;
 			\item $\Hom_{\ca/I}(f,g)=\{j\in\Hom_\ca(\dom_\ca(f),\dom_\ca(g))|\,g\circ^\ca j=f\}$;
@@ -443,7 +443,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{cor}\label{identity transformation}
-	Observe \hyperref[iso]{diagram 5}, we have:
+	Observe \hyperref[iso]{diagram 5}, we have the following conclusion:
 	\begin{enumerate}
 		\item (For any $\theta$, $\psi$ and $\phi:F\Rightarrow F$) $\theta\odot\phi=\theta\wedge\phi\odot\psi=\psi$ if and only if $\phi=\tid^F$.
 		\item $\theta$ is a natural isomorphism if and only if $\theta_X$ is an isomorphism for each $X\in\Ob(\ca)$.
@@ -610,7 +610,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{defi}\label{different functors}
-	For functor $F:\ca\to\D$, we define:
+	For functor $F:\ca\to\D$, we add some properties:
 	\begin{itemize}
 		\item $F$ is \emph{essentially surjective} if $\forall Y\in\Ob(\D)\exists X\in\Ob(\ca)[F(X)\mathop{\simeq}\limits^\mathrm{M}F(Y)]$.
 		\item $F$ is \emph{faithful} if for all $X,Y\in\Ob(\ca)$, $F\upharpoonright_{\Hom_\ca(X,Y)}\to\Hom_\D(F(X),F(Y))$ is injective.
@@ -663,7 +663,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{cor}\label{op}
-	For \begin{tikzcd}\ca_1 \arrow[r, "F"] & \ca_2 \arrow[r, "G"] & \ca_3\end{tikzcd}, we have:
+	For \begin{tikzcd}\ca_1 \arrow[r, "F"] & \ca_2 \arrow[r, "G"] & \ca_3\end{tikzcd}, we have the following conclusion
 	\begin{enumerate}
 		\item $F:\ca_1\tto\ca_2\Longrightarrow F\op:\ca\op_1\tto\ca\op_2$;
 		\item $(F\op)\op=F$;
@@ -680,7 +680,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{exm}
-	Consider a topological space $(X,\mathcal{T})$, let $I=[0,1]$. We now define: 
+	Consider a topological space $(X,\mathcal{T})$, let $I=[0,1]$. We now build a homotopy in it:
 	\begin{itemize}
 		\item $f:I\to X$ is a \emph{path} from $x\in X$ to $y\in X$ if $f$ is a continuous mapping and $f(x)=0$, $f(y)=1$. We denote the collection of the paths in $X$ from $x$ to $y$ as $\mathrm{P}_X(x,y)$.
 		\item For $f\in\mathrm{P}_X(x,y)$ and $g\in\mathrm{P}(y,z)$, the composition of paths $f*g:I\to X$ is defined as follow:
@@ -709,7 +709,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 
 
 \begin{lmm}\label{l4}
-	For category $\ca$, we have:
+	For category $\ca$, we have the following conclusion:
 	\begin{enumerate}
 		\item Suppose $\AC$,
 			\footnote{The Axiom of Choice in $\zfc$ provides choice functions based on sets, but not proper classes, so the categories in this proposition refer to the small categories. If you want this proposition to be true in any large categories, you need stronger axiom of choice, which is based on any class. However, it can't be discussed in $\zfc$.}
@@ -726,7 +726,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 	\begin{enumerate}
 		\item Because the isomorphism relation among objects satisfies ref{}lexivity, symmetry and transitivity, we can divide them into an equivalence (not functor, but a simple relation) class $\ca/\mathop{\simeq}\limits^\mathrm{M}$. Using $\AC$, we can construct a choice function which selects representative element in each $[X]$ for all $X\in\Ob(\ca)$. By preserving the representative elements and all the morphisms between any two of them, they form a full subcategory $\ca'$ of category $\ca$, and it's easy to see that $\ca'$ is the skeleton of $\ca$.
 		
-		\item Construct:\begin{itemize}
+		\item Construct\begin{itemize}
 			\item $\kappa\upharpoonright_{\Ob(\ca)}$ is the choice function mentioned in Proposition 1.
 			\item A natural transformation (we will verify this) $\theta:\id_\ca\Rightarrow\iota\kappa$ such that $\theta_X\in\Hom_\ca(X,\iota\kappa(X))$ is the isomorphism (it's uniquely exists) for all $X\in\Ob(X)$.
 			\item For all $X,Y\in\Ob(X,Y)$ and $f\in\Hom_\ca(X,Y)$, because $\theta_X$ is an isomorphism, we have
@@ -739,7 +739,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 				then we can define $\kappa(f):=\theta_Y\circ f\circ\theta\iv_X\in\Hom_{\ca'}(\kappa(X),\kappa(Y))$.
 			\end{itemize}
 		
-			Verify:\begin{itemize}
+			Verify\begin{itemize}
 				\item $\kappa$ is indeed a functor, i.e., it satisfies the three factors of functor on morphisms. It's trivial.
 				\item $\theta$ is indeed a natural transformation , i.e., we have the following commutative diagram:
 				\[\begin{tikzcd}
@@ -1068,7 +1068,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 		F(S) \arrow[->,>=stealth, rrr, "F(f)"] & & & F(T),
 	\end{tikzcd}\]
 	thus $\big(F(f)\big)(u_S)=\phi_T(f)$. We now prove that $\Theta$ is injective by proving $\phi\ne\psi\Longrightarrow\Theta(\phi)\ne\Theta(\psi)$:\\
-	Suppose $\phi,\psi:\mathsf{Hom}_\ca(S,-)\Rightarrow F$ and $\phi\ne\psi$, so there must exists an $X\in\Ob(\ca)$ that $\phi_X\ne\psi_X$, note that they are mappings, so there exists $f\in\Hom_\ca(S,X)$ such that $\phi_X(f)\ne\psi_X(f)$. Thus $\big(F(f)\big)(\phi_S(\1_S))\ne\big(F(f)\big)(\psi_S(\1_S))$, then we have $\phi_S(\1_S)\ne\phi_S(\1_S)$.
+	Suppose $\phi,\psi:\mathsf{Hom}_\ca(S,-)\Rightarrow F$ and $\phi\ne\psi$, so there must exists an $X\in\Ob(\ca)$ that $\phi_X\ne\psi_X$, note that they are mappings, so there exists $f\in\Hom_\ca(S,X)$ such that $\phi_X(f)\ne\psi_X(f)$. Thus $\big(F(f)\big)(\phi_S(\1_S))\ne\big(F(f)\big)(\psi_S(\1_S))$, then we have $\phi_S(\1_S)\ne\psi_S(\1_S)$.
 	
 	\textbf{Surjective}: For any $x\in F(S)$, we now construct a natural transformation (we'll verify it later):
 	\begin{align*}
@@ -1086,7 +1086,7 @@ The newest edition of this note (including \texttt{pdf.} file and the source cod
 	Obviously the inside diagram always commutes for any $g\in\Hom_\ca(S,A)$, because of the property of mapping, we have the outside diagram commutes.\\
 	On the other hand, $\hat x_S(\1_S)=\1_{F(S)}(x)=x$. In summary, for any $x\in F(S)$ there always exists a natural transformation $\phi:\mathsf{Hom}_\ca(S,-)\Rightarrow F$ that $u_S=x$, thus $\Theta$ is surjective.
 	
-	The proof about $\ca^\vee$ with $k_\ca$ is similar.
+	The proof on $\ca^\vee$ with $k_\ca$ is similar.
 \end{proof}
 
 
