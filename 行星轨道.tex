@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,geometry}
+\geometry{a4paper,left=2.0cm,right=2.0cm,top=1.5cm,bottom=2.0cm}
+\begin{document}
+\begin{align}
+*\ A=&GM,\quad*\ u=r^{-1}.\\
+L=&v_{\parallel}r=\frac{\mathrm d\theta}{\mathrm dt}r^2,\\
+E=&\frac12\left(\left(\frac{\mathrm d\theta}{\mathrm dt}r\right)^2+\left(\frac{\mathrm dr}{\mathrm dt}\right)^2\right)-\frac{A}{r},\\
+\frac{\mathrm d\theta}{\mathrm dt}r=&Lu,\quad L\frac{\mathrm dt}{\mathrm d\theta}=\frac{1}{u^2},\\
+\mathrm dr=&-\frac{\mathrm du}{u^2}=-L\frac{\mathrm du\cdot \mathrm dt}{\mathrm d\theta}\iff\frac{\mathrm dr}{\mathrm dt}=-L\frac{\mathrm du}{\mathrm d\theta}.\\
+2E=&L^2u^2+L^2\left(\frac{\mathrm du}{\mathrm d\theta}\right)^2-2A u.\\
+\frac{2E}{L^2}=&\left(\frac{\mathrm du}{\mathrm d\theta}\right)^2+u^2-\frac{2A}{L^2}u.\\
+q=&\left(\frac{\mathrm du}{\mathrm d\theta}\right)^2+(u-p)^2,\\
+*\ p=&\frac{A}{L^2},\quad*q=p^2+\frac{2E}{L^2}=\frac{J^2}{L^{4}},\quad J^2=A^2+2EL^2.\\
+J^2=&A^2+(v_\parallel^2+v_\bot^2-2A u)(v_\parallel^2r_0)^2\ge(v_\parallel^2r_0-A)^2\ge0.\\
+u=&\sqrt q\cos(\theta+\theta_0)+p,\\
+\text{if } \theta=&0\Longrightarrow u=u_0,\quad\theta_0=\arccos\left(\frac{u_0-p}{\sqrt q}\right).\\
+e=&\frac JA,\quad l=\frac{L^2}{A},\\
+r=&\frac{l}{1+e\cos(\theta+\theta_0)}=\frac{L^2}{A+J\cos(\theta+\theta_0)}.\\
+\frac{\mathrm dr}{\mathrm d\theta}=&\frac{l\sin(\theta+\theta_0)}{(1+e\cos(\theta+\theta_0))^2}.\\
+l^2=&(1-e^2)x^2+y^2-2lex.\\
+\frac{\mathrm dS}{\mathrm dt}=&\frac{v_\parallel r}{2}=\frac L2=\frac{r^2}{2}\frac{\mathrm d\theta}{\mathrm dt},\\
+\frac{\mathrm dt}{\mathrm d\theta}=&\frac{r^2}{L}=\frac{L^3}{A^2}\frac1{(1+e\cos\theta)^2}.\\
+a=&\frac{l}{1-e^2},\quad b=a\sqrt{1-e^2},\quad S=\pi ab=\frac{LT}{2}.\\
+4S^2=&L^2T^2=4\pi^2a^4(1-e^2),\quad\frac{T^2}{a^3}=4\pi^2\frac{l}{L^2}=\frac{4\pi^2}{A}.\\
+T=&\frac{\pi A}{\sqrt{-2E^3}},\quad a=-\frac{A}{2E}.\\
+t=&\frac{L^3}{A^2}\int_{0}^{\theta}\frac{\mathrm dx}{(1+e\cos x)^2}\quad\quad(0<\theta<\pi)\\
+=&\frac{L^3}{A^2}\left(\frac{2\arctan\left(\sqrt{\frac{1-e}{1+e}}\tan\frac\theta2\right)}{\left(1-e^2\right)^{3/2}}-\frac{e\sin\theta}{\left(1-e^2\right)(e\cos\theta+1)}\right).
+\end{align}
+\end{document}
