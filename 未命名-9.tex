@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{amsthm,amsmath,amssymb,mathrsfs,geometry,hyperref,enumerate,mathtools,multirow}
+\geometry{a4paper,left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
+\begin{document}
+	$\forall x_0,y_0\in\mathbb{C}$
+	$$\Gamma(x,y):=Ax^2+2Bxy+Cy^2+2Dx+2Ey+F$$
+	\begin{align}
+		\Gamma_x(x,y)&:=Ax+By+D,\\
+		\Gamma_y(x,y)&:=Bx+Cy+E,\\
+		\Gamma_0(x,y)&:=Dx+Ey+F.
+	\end{align}
+	$\phi:=\Gamma_x(x_0,y_0),\psi:=\Gamma_y(x_0,y_0),\chi:=\Gamma_0(x_0,y_0),\Theta:=\Gamma(x_0,y_0).$
+	$$\Pi(x,y):=a_{11}x^2+2a_{12}xy+a_{22}y^2+2a_{13}x+2a_{23}y+a_{33}.$$
+	\begin{align}
+		&x_2\cdot\Gamma_x(x_1,y_1)+y_2\cdot\Gamma_y(x_1,y_1)+\Gamma_0(x_1,y_1)\\
+		=&Ax_1x_2+B(x_1y_2+x_2y_1)+Cy_1y_2+D(x_1+x_2)+E(y_1+y_2)+F\\
+		=&x_1\cdot\Gamma_x(x_2,y_2)+y_1\cdot\Gamma_y(x_2,y_2)+\Gamma_0(x_2,y_2)\\
+		=&\Gamma(x_1,y_1;x_2,y_2).
+	\end{align}
+	The tangent on $(\hat x,\hat y)$ in $\Pi$ is the line $\hat l:\Pi(\hat x,\hat y;x,y)=0$, i.e., $\Pi_x(\hat x,\hat y)\cdot x+\Pi_y(\hat x,\hat y)\cdot y+\Pi_0(\hat x,\hat y)=0.$\\
+	It corresponds to $l:mx+ny-(mx_0+ny_0+1)=0.$\\
+	Thus $m=-\frac{\Pi_x(\hat x,\hat y)}{\Pi(\hat x,\hat y;x_0,y_0)},n=-\frac{\Pi_y(\hat x,\hat y)}{\Pi(\hat x,\hat y;x_0,y_0)}$.\\
+	With $A+C+2(\phi m+\psi n)+\Theta(m^2+n^2)=0$,
+	$$(A+C)\cdot\Pi(\hat x,\hat y;x_0,y_0)^2-2(\phi\Pi_x(\hat x,\hat y)+\psi\Pi_y(\hat x,\hat y))\cdot\Pi(\hat x,\hat y;x_0,y_0)+\Theta(\Pi_x(\hat x,\hat y)^2+\Pi_y(\hat x,\hat y)^2)=0.$$
+	And $\Pi(\hat x,\hat y;\hat x,\hat y)=0.$\\
+	$t_{33}:=A+C,\mathbf X:=\Pi_x(\hat x,\hat y),\mathbf Y:=\Pi_y(\hat x,\hat y),\mathbf Z:=\Pi_0(\hat x,\hat y)$.
+	$$t_{33}(x_0\mathbf X+y_0\mathbf Y+\mathbf Z)^2-2(\phi \mathbf X+\psi \mathbf Y)(x_0\mathbf X+y_0\mathbf Y+\mathbf Z)+\Theta(\mathbf X^2+\mathbf Y^2)=0.$$
+	$$(t_{33}x_0^2-2\phi x_0+\Theta)\mathbf X^2+(t_{33}y_0^2-2\psi y_0+\Theta)\mathbf Y^2+t_{33}\mathbf Z^2+2(t_{33}x_0y_0-\phi y_0-\psi x_0)\mathbf{XY}+2(t_{33}x_0-\phi)\mathbf{XZ}+2(t_{33}y_0-\psi)\mathbf{YZ}=0.$$
+	$t_{11}\mathbf X^2+t_{22}\mathbf Y^2+t_{33}\mathbf Z^2+2t_{12}\mathbf{XY}+2t_{13}\mathbf{XZ}+2t_{23}\mathbf{YZ}=0.$
+	$$\mathcal{M}(T)=\begin{pmatrix}
+		a_{11} & a_{12} & a_{13}\\
+		a_{12} & a_{22} & a_{23}\\
+		a_{13} & a_{23} & a_{33}
+  \end{pmatrix}$$
+	$$\begin{bmatrix}
+		\mathbf{X}\\
+		\mathbf{Y}\\
+		\mathbf{Z}
+ 	\end{bmatrix}
+	=
+	\begin{pmatrix}
+		a_{11} & a_{12} & a_{13}\\
+		a_{12} & a_{22} & a_{23}\\
+		a_{13} & a_{23} & a_{33}
+ 	\end{pmatrix}
+	\begin{bmatrix}
+		\hat x\\
+		\hat y\\
+		\hat z
+ 	\end{bmatrix}$$
+	$$\left<T({\bf v}),z{\bf v}\right>=0\iff \left<T({\bf v}),S\circ T({\bf v}))\right>=0$$
+	$$\forall{\bf v}[\left<T({\bf v}),{\bf v}\right>=a\ne0\wedge\left<T({\bf v}),S\circ T{\bf v}\right>=b\ne0\iff\exists\rho\in\mathbb{R}[\left<T{\bf v},(\rho S\circ T-I)(\bf v)\right>=0]]$$
+	$$\left<T({\bf v}),(S\circ T-I)({\bf v})\right>=\left<{\bf v},T\circ(S\circ T-I)(\bf v)\right>=0$$
+Since $T\circ S\circ T-T$ is self-adjoint, $T\circ(S\circ T-I)={\bf0}$.
+$$T=S^{-1}.$$
+\begin{align}
+t_{11}&=C(x_0^2+y_0^2)+2Ey_0+F\\
+t_{12}&=-(B(x_0^2+y_0^2)+Dy_0+Ex_0)\\
+t_{22}&=A(x_0^2+y_0^2)+2Dx_0+F\\
+t_{13}&=Cx_0-By_0-D\\
+t_{23}&=Ay_0-Bx_0-E\\
+t_{33}&=A+C
+\end{align}
+If $B,D,E=0$, $t_{11}=C(x_0^2+y_0^2)+F,t_{12}=0,t_{22}=A(x_0^2+y_0^2)+F,t_{13}=Cx_0,t_{23}=Ay_0,t_{33}=A+C.$
+\end{document}
